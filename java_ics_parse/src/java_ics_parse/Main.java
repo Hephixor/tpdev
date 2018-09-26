@@ -21,10 +21,8 @@ public class Main {
 				"END:VCALENDAR\r\n";
 
 				ICalendar ical = Biweekly.parse(str).first();
-
 				VEvent event = ical.getEvents().get(0);
 				String summary = event.getSummary().getValue();
-				
 				System.out.println(summary);
 
 	}
