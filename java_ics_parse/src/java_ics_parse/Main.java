@@ -166,6 +166,7 @@ public class Main {
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setConnectTimeout(30000);
 			con.setRequestMethod("GET");
+			con.setRequestProperty("Content-Type",  "text/calendar");
 			con.setDoOutput(true);
 			
 			String user_pass = "student.master:guest";
