@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import biweekly.Biweekly;
@@ -32,7 +33,6 @@ public class CalendarMaker {
 	}
 
 	public static void parseUE(String ue) {
-		//System.out.println("Parsing UE : " + ue);
 		String[] pue = ue.split("-");
 		System.out.println("Matière : " + pue[pue.length-1]);
 		if(pue.length>1)
@@ -40,8 +40,6 @@ public class CalendarMaker {
 		
 		if(pue.length>2)
 			System.out.println("Type : " + pue[1]);
-		
-		
 	}
 
 	public static void parseStartTime(String ue) {
@@ -56,7 +54,7 @@ public class CalendarMaker {
 		System.out.println("End time : " + pue[3]);
 	}
 
-	public void calCon() {
+	public List<VEvent> getEventCollection() {
 		try {
 			URL url = new URL(urls);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -85,20 +83,19 @@ public class CalendarMaker {
 			con.disconnect();
 
 			String calendar = content.toString();
-			System.out.println(calendar);
+			//System.out.println(calendar);
 
 			ICalendar ical = Biweekly.parse(calendar).first();
-			//			System.out.println(ical);
 			events = ical.getEvents();
 
-			for (VEvent vEvent : events) {
-				System.out.println("---------------------");
-				parseUE(vEvent.getSummary().getValue());
-				parseStartTime(vEvent.getDateStart().getValue().toString());
-				parseEndTime(vEvent.getDateEnd().getValue().toString());
-				System.out.println("---------------------");
-				System.out.println();
-			}
+//			for (VEvent vEvent : events) {
+//				System.out.println("---------------------");
+//				parseUE(vEvent.getSummary().getValue());
+//				parseStartTime(vEvent.getDateStart().getValue().toString());
+//				parseEndTime(vEvent.getDateEnd().getValue().toString());
+//				System.out.println("---------------------");
+//				System.out.println();
+//			}
 
 
 		} catch (MalformedURLException e) {
@@ -107,7 +104,49 @@ public class CalendarMaker {
 			System.out.println("IO error");
 			e.printStackTrace();
 		}
+		
+		return events;
 	}
+	
+	public ArrayList<CalendarEntry> getEventsEntries(List<VEvent> events){
+		
+		ArrayList<CalendarEntry> CalEvents = new ArrayList<CalendarEntry>();
+		
+		for (VEvent vEvent : events) {
+			//Details
+			String[] pue = vEvent.getSummary().getValue().split("-");
+			String matiere =  pue[pue.length-1];
+			String code = "";
+			String type = "";
+			String location = "";
+			if(pue.length>1)
+				code = pue[0];
+			if(pue.length>2)
+				type = pue[1];
+			
+			if(vEvent.getLocation()!=null) {
+				location = vEvent.getLocation().getValue();
+			}
+			
+			
+			//Start Time
+			String[] tue = vEvent.getDateStart().getValue().toString().split(" ");
+			String startD = tue[0] + " " + tue[2] + " " + tue[1];
+			String startT = tue[3];
+			
+			//End Time
+			String[] eue = vEvent.getDateEnd().getValue().toString().split(" ");
+			String endD = eue[0] + " " + eue[2] + " " + eue[1];
+			String endT = eue[3];
+			
+			CalendarEntry tmpCal = new CalendarEntry(matiere,code,type,location, startD,startT,endD,endT);
+			CalEvents.add(tmpCal);
+		}
+		
+		return CalEvents;
+		
+	}
+	
 
 	
 }

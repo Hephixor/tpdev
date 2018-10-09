@@ -4,29 +4,41 @@ public class CalendarEntry {
 	private String matiere;
 	private String code;
 	private String type;
+	private String location;
 	private String startD;
 	private String startT;
 	private String endD;
 	private String endT;
+	private boolean suivi;
 	// color ?
-	// suivi ?
 	
-	public CalendarEntry(String matiere, String code, String type, String startD, String startT, String endD, String endT) {
+	
+	public CalendarEntry(String matiere, String code, String type, String location, String startD, String startT, String endD, String endT) {
 		this.matiere=matiere;
 		this.code=code;
 		this.type=type;
+		this.location=location;
 		this.startD=startD;
 		this.startT=startT;
 		this.endD=endD;
 		this.endT=endT;
+		this.suivi=true;
 	}
 	
 	
 
 	@Override
 	public String toString() {
-		return "CalendarEntry [matiere=" + matiere + ", code=" + code + ", type=" + type + ", startD=" + startD
-				+ ", startT=" + startT + ", endD=" + endD + ", endT=" + endT + "]";
+		return "CalendarEntry [matiere=" + matiere + ", code=" + code + ", type=" + type + ", location="+location+", startD=" + startD
+				+ ", startT=" + startT + ", endD=" + endD + ", endT=" + endT + ", suivi=" + suivi+"]";
+	}
+	
+	public boolean getSuivi() {
+		return suivi;
+	}
+	
+	public void setSuivi(boolean suivi) {
+		this.suivi = suivi;
 	}
 
 	public String getMatiere() {
