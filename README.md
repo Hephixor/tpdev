@@ -9,7 +9,9 @@ Trouver un moyen de parcourir toutes les URLs de calendrier disponibles sur cald
 * Faire un crawler ?
 
 Intégrer le java dans android studio
+
 Réfléchir à l'interêt de télécharger le calendrier en .ics car il devient statique
+
 Stocker les préférences en shared pref
 
 ## FrontEnd :
