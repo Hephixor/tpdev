@@ -1,6 +1,5 @@
 package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 

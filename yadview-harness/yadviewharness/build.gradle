@@ -1,0 +1,22 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        applicationId "com.google.gode.yadview_harness"
+        targetSdkVersion 28
+        minSdkVersion = 16
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    implementation project(':comgooglecodeyadview')
+}
