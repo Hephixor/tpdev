@@ -10,7 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
 
 import org.w3c.dom.Text;
 
@@ -85,6 +88,9 @@ public class fragment_day extends Fragment {
                 createDialog(mParam1).show();
             }
         });
+
+        ListView list_data = fragment_view.findViewById(R.id.list_data);
+        new AsyncTaskGetEventsEntries(getActivity(), list_data).execute("");
 
         return fragment_view;
     }

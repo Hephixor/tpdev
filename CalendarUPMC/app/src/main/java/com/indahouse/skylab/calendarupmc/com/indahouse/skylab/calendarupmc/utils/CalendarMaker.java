@@ -56,16 +56,14 @@ public class CalendarMaker {
 
 	public List<VEvent> getEventCollection() {
 		try {
+			String user_pass = "student.master:guest";
+			String encoded_pass = Base64.encodeBase64String(user_pass.getBytes());
+
 			URL url = new URL(urls);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setConnectTimeout(30000);
 			con.setRequestMethod("GET");
 			con.setRequestProperty("Content-Type",  "text/calendar");
-			con.setDoOutput(true);
-
-			String user_pass = "student.master:guest";
-
-			String encoded_pass = Base64.encodeBase64String(user_pass.getBytes());
 			con.setRequestProperty("Authorization", "Basic " + encoded_pass);
 
 			System.out.println("Status: " + con.getResponseCode());
