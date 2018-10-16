@@ -1,5 +1,6 @@
 package com.indahouse.skylab.calendarupmc;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -96,6 +98,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         // Set long press listener for empty view
         mWeekView.setEmptyViewLongPressListener(this);
+
+        mWeekView.goToHour(8);
 
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
@@ -184,7 +188,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
             @Override
             public String interpretTime(int hour) {
-                return hour > 11 ? (hour - 12) + " PM" : (hour == 0 ? "12 AM" : hour + " AM");
+                return String.valueOf(hour);
+                // return hour > 11 ? (hour - 12) + " PM" : (hour == 0 ? "12 AM" : hour + " AM");
             }
         });
     }
@@ -208,9 +213,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         Class fragmentClass = null;
 
         if (id == R.id.nav_camera) {
-            fragmentClass = fragment_main.class;
+          //  fragmentClass = fragment_main.class;
         } else if (id == R.id.nav_gallery) {
-            fragmentClass = fragment_day.class;
+          //  fragmentClass = fragment_day.class;
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -244,7 +249,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
+        createDialog(event.getName(),event.getStartTime().get(Calendar.HOUR) +":"+event.getStartTime().get(Calendar.MINUTE)+" - " + event.getEndTime().get(Calendar.HOUR) + ":" + event.getEndTime().get(Calendar.MINUTE) + " \n " + event.getLocation().toString()).show();
+
+    }
+
+    public Dialog createDialog(String title, String text){
+        return new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
     }
 
     @Override
