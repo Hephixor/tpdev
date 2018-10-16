@@ -31,4 +31,6 @@ dependencies {
     implementation files('jars/biweekly-0.6.2.jar')
     implementation files('jars/vinnie-2.0.2.jar')
     implementation 'com.google.guava:guava:15.0'
+    implementation 'com.github.alamkanak:android-week-view:1.2.6'
+    implementation 'com.squareup.retrofit:retrofit:1.9.0'
 }

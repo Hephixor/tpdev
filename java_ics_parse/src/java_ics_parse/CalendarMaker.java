@@ -1,4 +1,5 @@
-package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
+package java_ics_parse;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
