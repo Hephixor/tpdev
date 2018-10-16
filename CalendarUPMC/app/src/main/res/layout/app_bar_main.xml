@@ -45,13 +45,19 @@
         app:pastBackgroundColor="#05000000"
      />
 
-    <TextView
-        android:id="@+id/textView"
+    <ListView
+        android:id="@+id/list_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
+<<<<<<< HEAD
         android:gravity="bottom"
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />
+=======
+        android:visibility="invisible"/>
+>>>>>>> a61dca3abbb98995242ce695a6f1b3d9e6b8498a
 
 
     <FrameLayout
