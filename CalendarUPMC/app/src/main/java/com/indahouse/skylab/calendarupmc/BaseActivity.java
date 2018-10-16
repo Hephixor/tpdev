@@ -1,6 +1,8 @@
 package com.indahouse.skylab.calendarupmc;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,12 +19,15 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -64,13 +69,23 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         */
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        Activity activityhandle = this;
         fab.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ListView list_data = findViewById(R.id.list_data);
+                list_data.setBackgroundColor(Color.GRAY);
+
+                if(list_data.getVisibility() == view.INVISIBLE){
+                    new AsyncTaskGetEventsEntries(BaseActivity.this, list_data).execute("");
+                    list_data.setVisibility(View.VISIBLE);
+                }else{
+                    list_data.setVisibility(View.INVISIBLE);
+                }
             }
         });
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
