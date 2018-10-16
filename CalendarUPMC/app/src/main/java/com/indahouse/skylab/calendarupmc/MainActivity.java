@@ -1,15 +1,26 @@
 package com.indahouse.skylab.calendarupmc;
 
 
+import android.graphics.Color;
+import android.view.View;
+import android.widget.ListView;
+import android.widget.Toast;
+
 import com.alamkanak.weekview.WeekViewEvent;
 import com.indahouse.skylab.calendarupmc.BaseActivity;
+import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
+import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.apiclient.Event;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
-public class MainActivity extends BaseActivity {
+
+public class MainActivity extends BaseActivity{
     boolean calledNetwork = false;
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
@@ -17,9 +28,12 @@ public class MainActivity extends BaseActivity {
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
 
+       //Finalement cette classe servirait à charger le cache de l'emploi du temps ?
+
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
         Calendar startTime = Calendar.getInstance();
+
         startTime.set(Calendar.HOUR_OF_DAY, 8);
         startTime.set(Calendar.MINUTE, 45);
         startTime.set(Calendar.MONTH, newMonth - 1);
@@ -31,7 +45,7 @@ public class MainActivity extends BaseActivity {
         WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime), startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_01));
         event.setName("ALASACA");
-        event.setLocation("24-25 207");
+        event.setLocation("\n\n24-25 207");
         events.add(event);
 
         startTime = Calendar.getInstance();
@@ -121,19 +135,19 @@ public class MainActivity extends BaseActivity {
         events.add(event);
 
         //AllDay event
-        /* startTime = Calendar.getInstance();
+       /*  startTime = Calendar.getInstance();
         startTime.set(Calendar.HOUR_OF_DAY, 0);
         startTime.set(Calendar.MINUTE, 0);
         startTime.set(Calendar.MONTH, newMonth-1);
         startTime.set(Calendar.YEAR, newYear);
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.HOUR_OF_DAY, 23);
-        event = new WeekViewEvent(7, getEventTitle(startTime),null, startTime, endTime, true);
+        event = new WeekViewEvent(7, getEventTitle(startTime),"", startTime, endTime);
         event.setColor(getResources().getColor(R.color.event_color_04));
         events.add(event);
-        events.add(event);
+        */
 
-        startTime = Calendar.getInstance();
+/*        startTime = Calendar.getInstance();
         startTime.set(Calendar.DAY_OF_MONTH, 8);
         startTime.set(Calendar.HOUR_OF_DAY, 2);
         startTime.set(Calendar.MINUTE, 0);
@@ -163,5 +177,7 @@ public class MainActivity extends BaseActivity {
 
         return events;
     }
+
+
 
 }

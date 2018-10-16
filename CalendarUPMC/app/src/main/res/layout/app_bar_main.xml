@@ -45,6 +45,8 @@
         app:pastBackgroundColor="#05000000"
      />
 
+
+
     <ListView
         android:id="@+id/list_data"
         android:layout_width="match_parent"

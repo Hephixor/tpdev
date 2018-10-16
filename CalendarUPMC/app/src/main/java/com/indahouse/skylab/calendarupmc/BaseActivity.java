@@ -78,9 +78,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             public void onClick(View view) {
                 ListView list_data = findViewById(R.id.list_data);
                 list_data.setBackgroundColor(Color.GRAY);
+                WeekView weekView = (WeekView) findViewById(R.id.weekView);
 
                 if(list_data.getVisibility() == view.INVISIBLE){
-                    new AsyncTaskGetEventsEntries(BaseActivity.this, list_data).execute("");
+                    new AsyncTaskGetEventsEntries(BaseActivity.this, list_data,weekView).execute("");
                     list_data.setVisibility(View.VISIBLE);
                 }else{
                     list_data.setVisibility(View.INVISIBLE);

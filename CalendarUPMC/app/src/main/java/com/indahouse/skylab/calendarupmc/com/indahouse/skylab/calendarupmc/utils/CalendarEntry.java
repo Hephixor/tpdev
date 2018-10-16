@@ -29,8 +29,7 @@ public class CalendarEntry {
 
 	@Override
 	public String toString() {
-		return "CalendarEntry [matiere=" + matiere + ", code=" + code + ", type=" + type + ", location="+location+", startD=" + startD
-				+ ", startT=" + startT + ", endD=" + endD + ", endT=" + endT + ", suivi=" + suivi+"]";
+		return matiere + "," + code + "," + type + ","+location+"," + startD+"," + startT + "," + endD + "," + endT + "," + suivi;
 	}
 	
 	public boolean getSuivi() {

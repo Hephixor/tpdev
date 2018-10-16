@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.alamkanak.weekview.WeekView;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
 
 import org.w3c.dom.Text;
@@ -89,8 +90,9 @@ public class fragment_day extends Fragment {
             }
         });
 
+        WeekView weekView = (WeekView) fragment_view.findViewById(R.id.weekView);
         ListView list_data = fragment_view.findViewById(R.id.list_data);
-        new AsyncTaskGetEventsEntries(getActivity(), list_data).execute("");
+        new AsyncTaskGetEventsEntries(getActivity(), list_data, weekView).execute("");
 
         return fragment_view;
     }
