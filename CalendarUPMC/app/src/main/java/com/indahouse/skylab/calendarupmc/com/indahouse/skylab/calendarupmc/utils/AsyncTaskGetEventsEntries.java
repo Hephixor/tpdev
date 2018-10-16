@@ -8,6 +8,11 @@ import android.widget.ListView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+//a mettre quelquepart
+/*ListView list_data = fragment_view.findViewById(R.id.list_data);
+        new AsyncTaskGetEventsEntries(getActivity(), list_data).execute("");*/
+
+
 public class AsyncTaskGetEventsEntries extends AsyncTask<String, String, ArrayList<String>> {
 
     Activity context;
