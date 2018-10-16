@@ -35,8 +35,15 @@
         app:noOfVisibleDays="3"
         app:dayBackgroundColor="#05000000"
         app:todayBackgroundColor="#1848adff"
-        app:headerColumnBackground="#ffffffff"
-        />
+        app:headerColumnBackground="#ffffffff"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:gravity="bottom"
+        android:text="ioghnuegouinhogoithog:hitiohgiuothduhghtiodhegdog:coihdtohgot"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
 
 
     <FrameLayout
