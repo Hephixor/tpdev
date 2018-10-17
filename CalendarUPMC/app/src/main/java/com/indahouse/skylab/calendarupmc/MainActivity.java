@@ -1,27 +1,11 @@
 package com.indahouse.skylab.calendarupmc;
 
-
-import android.graphics.Color;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.Toast;
-
 import com.alamkanak.weekview.WeekViewEvent;
-import com.indahouse.skylab.calendarupmc.BaseActivity;
-import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
-import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.apiclient.Event;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-
 public class MainActivity extends BaseActivity{
-    boolean calledNetwork = false;
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
 
@@ -33,7 +17,6 @@ public class MainActivity extends BaseActivity{
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
         Calendar startTime = Calendar.getInstance();
-
         startTime.set(Calendar.HOUR_OF_DAY, 8);
         startTime.set(Calendar.MINUTE, 45);
         startTime.set(Calendar.MONTH, newMonth - 1);

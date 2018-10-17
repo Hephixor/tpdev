@@ -1,4 +1,4 @@
-package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.apiclient;
+package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
 
 
 
@@ -6,8 +6,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 
 import com.alamkanak.weekview.WeekViewEvent;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,16 +19,12 @@ import java.util.Date;
  */
 public class Event {
 
-    @Expose @SerializedName("name")
     private String mName;
-    @Expose @SerializedName("dayOfMonth")
     private int mDayOfMonth;
-    @Expose @SerializedName("startTime")
     private String mStartTime;
-    @Expose @SerializedName("endTime")
     private String mEndTime;
-    @Expose @SerializedName("color")
     private String mColor;
+    private String mLocation;
 
     public String getName() {
         return mName;
@@ -72,6 +66,10 @@ public class Event {
         this.mColor = color;
     }
 
+    public String getLocation() { return mLocation; }
+
+    public void setLocation(String location) { this.mLocation = location ;}
+
     @SuppressLint("SimpleDateFormat")
     public WeekViewEvent toWeekViewEvent(){
 
@@ -109,6 +107,7 @@ public class Event {
         weekViewEvent.setStartTime(startTime);
         weekViewEvent.setEndTime(endTime);
         weekViewEvent.setColor(Color.parseColor(getColor()));
+        weekViewEvent.setLocation(mLocation);
 
         return weekViewEvent;
     }

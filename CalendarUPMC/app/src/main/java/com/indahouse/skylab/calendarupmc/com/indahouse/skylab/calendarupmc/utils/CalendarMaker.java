@@ -1,5 +1,7 @@
 package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -77,7 +79,6 @@ public class CalendarMaker {
 			}
 
 			in.close();
-
 			con.disconnect();
 
 			String calendar = content.toString();
@@ -126,18 +127,23 @@ public class CalendarMaker {
 				location = vEvent.getLocation().getValue();
 			}
 			
-			
+
 			//Start Time
 			String[] tue = vEvent.getDateStart().getValue().toString().split(" ");
-			String startD = tue[0] + " " + tue[2] + " " + tue[1];
+			String startD = tue[2];
+			String startM = tue[1];
 			String startT = tue[3];
+			String startY = tue[5];
 			
 			//End Time
 			String[] eue = vEvent.getDateEnd().getValue().toString().split(" ");
-			String endD = eue[0] + " " + eue[2] + " " + eue[1];
+			String endD = eue[2];
+            String endM = eue[1];
 			String endT = eue[3];
+			String endY = eue[5];
 			
-			CalendarEntry tmpCal = new CalendarEntry(matiere,code,type,location, startD,startT,endD,endT);
+			CalendarEntry tmpCal = new CalendarEntry(matiere,code,type,location,startY,startM,startD,startT,endY,endM,endD,endT);
+			Log.e("Entry" ,String.valueOf(tmpCal.toString()));
 			CalEvents.add(tmpCal);
 		}
 		

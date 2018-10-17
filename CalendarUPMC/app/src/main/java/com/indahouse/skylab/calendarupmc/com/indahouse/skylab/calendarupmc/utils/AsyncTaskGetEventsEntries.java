@@ -6,14 +6,10 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.alamkanak.weekview.WeekViewLoader;
-import com.indahouse.skylab.calendarupmc.R;
-import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.apiclient.Event;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -23,10 +19,14 @@ import java.util.List;
         new AsyncTaskGetEventsEntries(getActivity(), list_data).execute("");*/
 
 
-public class AsyncTaskGetEventsEntries extends AsyncTask<String, String, ArrayList<String>> {
+public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, ArrayList<CalendarEntry>> {
 
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     private WeekView mWeekView;
+    private ArrayList<CalendarEntry> calEvents = new ArrayList<>();
+    private ArrayList<String> data = new ArrayList<String>();
+
+
 
     Activity context;
     ListView view;
@@ -35,44 +35,44 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<String, String, ArrayLi
         context = ctx;
         view = v;
         mWeekView = weekView;
-    }
+        }
 
     @Override
-    protected ArrayList<String> doInBackground(String... strings) {
-        String urls = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M1_STL");
-
+    protected ArrayList<CalendarEntry> doInBackground(Boolean... unused) {
+        String urls = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
         CalendarMaker cm = new CalendarMaker(urls);
         ArrayList<CalendarEntry> cal = cm.getEventsEntries(cm.getEventCollection());
 
-        ArrayList<String> data = new ArrayList<String>();
-        for (CalendarEntry calendarEntry : cal) {
-            data.add(calendarEntry.toString());
-        }
+        return cal;
+    }
 
-        return data;
+    protected void onProgressUpdate(Integer... progress){
+       // setProgressPercent(progress);
     }
 
     @Override
-    protected void onPostExecute(ArrayList<String> strings) {
-        super.onPostExecute(strings);
+    protected void onPostExecute(ArrayList<CalendarEntry> calEvents) {
+       super.onPostExecute(calEvents);
 
-        // parser ici les Strings en Event
+       ArrayList<String> strings = new ArrayList<>();
+            events.clear();
+            for (CalendarEntry calEvent : calEvents) {
+                if(calEvent.getMatiere().toUpperCase().equals("PPC")) {
+                    WeekViewEvent tmpEvent = CalendarEntryParser.parseEntry(calEvent);
+                    if(tmpEvent!=null){
+                      data.add(calEvent.toString());
+                      this.events.add(tmpEvent);
+                    }
+                }
+            }
 
+            Log.e("Event List Size ", String.valueOf(events.size()));
 
-        for(String string : strings){
-            CalendarEntryParser.parseEntry(string);
-        }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, data);
+            view.setAdapter(adapter);
 
-        events.clear();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, strings);
-        view.setAdapter(adapter);
-
-
-        //for (Event event : events) {
-         //   this.events.add(event.toWeekViewEvent());
-        //}
         WeekViewLoader wk = new WeekViewLoader() {
+            int i=0;
             @Override
             public double toWeekViewPeriodIndex(Calendar instance) {
                 return 0;
@@ -82,10 +82,12 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<String, String, ArrayLi
             public List<? extends WeekViewEvent> onLoad(int periodIndex) {
                 return events;
             }
+
         };
 
         mWeekView.setWeekViewLoader(wk);
-        mWeekView.notifyDatasetChanged();
+
+            mWeekView.notifyDatasetChanged();
     }
 
     protected String getEventTitle(Calendar time) {

@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +33,9 @@ import com.alamkanak.weekview.WeekViewEvent;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -57,6 +60,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
      /*   //Fragments
         Fragment fragment = null;
         Class fragmentClass = fragment_main.class;
@@ -79,9 +84,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 ListView list_data = findViewById(R.id.list_data);
                 list_data.setBackgroundColor(Color.GRAY);
                 WeekView weekView = (WeekView) findViewById(R.id.weekView);
+                Boolean[] bool = new Boolean[1];
+                bool[0]=true;
 
                 if(list_data.getVisibility() == view.INVISIBLE){
-                    new AsyncTaskGetEventsEntries(BaseActivity.this, list_data,weekView).execute("");
+                    new AsyncTaskGetEventsEntries(BaseActivity.this, list_data,weekView).execute(bool[0]);
                     list_data.setVisibility(View.VISIBLE);
                 }else{
                     list_data.setVisibility(View.INVISIBLE);
@@ -235,8 +242,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
-            Intent intent = new Intent(BaseActivity.this, AsynchronousActivity.class);
-            startActivity(intent);
+         //   Intent intent = new Intent(BaseActivity.this, AsynchronousActivity.class);
+          //  startActivity(intent);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
