@@ -90,7 +90,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
-        setupDateTimeInterpreter(false);
+        setupDateTimeInterpreter(true);
 
 
 
@@ -120,7 +120,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 bool[0]=true;
 
                 if(list_data.getVisibility() == view.INVISIBLE){
-                    new AsyncTaskGetEventsEntries(BaseActivity.this).execute(bool[0]);
+                    new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this).execute(bool[0]);
                     list_data.setVisibility(View.VISIBLE);
                 }else{
                     list_data.setVisibility(View.INVISIBLE);

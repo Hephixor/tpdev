@@ -1,8 +1,11 @@
 package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.util.Log;
 
 import com.alamkanak.weekview.WeekViewEvent;
+import com.indahouse.skylab.calendarupmc.BaseActivity;
 import com.indahouse.skylab.calendarupmc.R;
 
 import java.util.Calendar;
@@ -14,7 +17,7 @@ public class CalendarEntryParser {
 
     }
 
-    public static WeekViewEvent parseEntry(CalendarEntry calendarEntry){
+    public static WeekViewEvent parseEntry(Context ctx, CalendarEntry calendarEntry){
 
         if(calendarEntry.getStartY() == Calendar.getInstance().get(Calendar.YEAR) || calendarEntry.getStartY() == Calendar.getInstance().get(Calendar.YEAR) +1 ){
             // IL,4I502,Consultation Copies,Salle SAR (14.15.508),02,13:00:00,Jul,2018,Jul,2018,02,14:00:00,true
@@ -39,25 +42,20 @@ public class CalendarEntryParser {
 
             switch (rand.nextInt(4)){
                 case 0:
-                    wEvent.setColor(R.color.event_color_01);
+                    wEvent.setColor(ctx.getResources().getColor(R.color.event_color_01));
                     break;
                 case 1:
-                    wEvent.setColor(R.color.event_color_02);
+                    wEvent.setColor(ctx.getResources().getColor(R.color.event_color_02));
                     break;
                 case 2:
-                    wEvent.setColor(R.color.event_color_03);
+                    wEvent.setColor(ctx.getResources().getColor(R.color.event_color_03));
                     break;
                 case 3:
-                    wEvent.setColor(R.color.event_color_04);
+                    wEvent.setColor(ctx.getResources().getColor(R.color.event_color_04));
                     break;
                 default:
-                    wEvent.setColor(R.color.event_color_01);
                     break;
             }
-
-
-            Log.e("Event startT parser", "event start " + wEvent.getStartTime());
-
 
             return wEvent;
         }

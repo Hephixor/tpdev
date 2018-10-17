@@ -1,19 +1,14 @@
 package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
-import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
-import com.alamkanak.weekview.WeekViewLoader;
-import com.indahouse.skylab.calendarupmc.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+
 
 
 public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, ArrayList<CalendarEntry>> {
@@ -21,10 +16,12 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, Arra
     private ArrayList<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     private ArrayList<CalendarEntry> calEvents = new ArrayList<>();
     public AsyncResponse delegate = null;
+    public Context context;
 
 
-    public AsyncTaskGetEventsEntries(AsyncResponse delegate){
+    public AsyncTaskGetEventsEntries(AsyncResponse delegate, Context ctx){
         this.delegate=delegate;
+        this.context=ctx;
         }
 
     @Override
@@ -43,17 +40,17 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, Arra
     @Override
     protected void onPostExecute(ArrayList<CalendarEntry> calEvents) {
        super.onPostExecute(calEvents);
-
        ArrayList<String> strings = new ArrayList<>();
             events.clear();
             for (CalendarEntry calEvent : calEvents) {
-                WeekViewEvent tmpEvent = CalendarEntryParser.parseEntry(calEvent);
+                WeekViewEvent tmpEvent = CalendarEntryParser.parseEntry(context,calEvent);
                     if(tmpEvent!=null){
-                     this.events.add(tmpEvent);
+                        if(calEvent.getMatiere().toUpperCase().equals("SVP")) {
+                            Log.e("XXX", String.valueOf(calEvent.getStartH())+"H"+String.valueOf(calEvent.getStartM()) + " -- " + String.valueOf(calEvent.getEndH())+"H"+String.valueOf(calEvent.getEndM()));
+                            this.events.add(tmpEvent);
+                        }
                     }
                 }
-
-            Log.e("Event List Size ", String.valueOf(events.size()));
 
         delegate.processFinish(events);
     }

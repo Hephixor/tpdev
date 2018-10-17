@@ -34,7 +34,7 @@
         app:columnGap="8dp"
         app:noOfVisibleDays="3"
         app:dayBackgroundColor="#05000000"
-        app:todayBackgroundColor="#1848adff"
+        app:todayBackgroundColor="#d2dff9"
         app:todayHeaderTextColor="@color/colorPrimaryDark"
         app:headerColumnBackground="#ffffffff"
         app:showNowLine="true"
@@ -43,6 +43,7 @@
         app:showDistinctWeekendColor="true"
         app:showDistinctPastFutureColor="true"
         app:pastBackgroundColor="#05000000"
+        app:overlappingEventGap="1dp"
      />
 
 
