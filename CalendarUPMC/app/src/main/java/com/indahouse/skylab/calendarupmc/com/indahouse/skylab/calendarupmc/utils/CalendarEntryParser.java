@@ -33,7 +33,7 @@ public class CalendarEntryParser {
             startTime.set(Calendar.YEAR, calendarEntry.getStartY());
 
             Calendar endTime = (Calendar) startTime.clone();
-           endTime.add(Calendar.HOUR, calendarEntry.getEndH());
+            endTime.add(Calendar.HOUR, calendarEntry.getEndH());
             endTime.add(Calendar.MINUTE, calendarEntry.getEndM());
             endTime.set(Calendar.MONTH, calendarEntry.monthAsInt(calendarEntry.getEndMo()));
 
@@ -42,19 +42,19 @@ public class CalendarEntryParser {
 
             switch (rand.nextInt(4)){
                 case 0:
-                    wEvent.setColor(ctx.getResources().getColor(R.color.event_color_01));
-                    break;
+                wEvent.setColor(ctx.getResources().getColor(R.color.event_color_01));
+                break;
                 case 1:
-                    wEvent.setColor(ctx.getResources().getColor(R.color.event_color_02));
-                    break;
+                wEvent.setColor(ctx.getResources().getColor(R.color.event_color_02));
+                break;
                 case 2:
-                    wEvent.setColor(ctx.getResources().getColor(R.color.event_color_03));
-                    break;
+                wEvent.setColor(ctx.getResources().getColor(R.color.event_color_03));
+                break;
                 case 3:
-                    wEvent.setColor(ctx.getResources().getColor(R.color.event_color_04));
-                    break;
+                wEvent.setColor(ctx.getResources().getColor(R.color.event_color_04));
+                break;
                 default:
-                    break;
+                break;
             }
 
             return wEvent;
@@ -66,7 +66,7 @@ public class CalendarEntryParser {
     }
 
     private static String getEventTitle(Calendar time) {
-       return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
-    }
+     return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
+ }
 
 }

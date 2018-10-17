@@ -65,34 +65,23 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
-
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);
-
         // Show a toast message about the touched event.
         mWeekView.setOnEventClickListener(this);
-
         // The week view has infinite scrolling horizontally. We have to provide the events of a
         // month every time the month changes on the week view.
         mWeekView.setMonthChangeListener(this);
-
         // Set long press listener for events.
         mWeekView.setEventLongPressListener(this);
-
         // Set long press listener for empty view
         mWeekView.setEmptyViewLongPressListener(this);
-
         mWeekView.goToHour(8);
-
 
 
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
         setupDateTimeInterpreter(true);
-
-
 
 
      /*   //Fragments
@@ -109,7 +98,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         */
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        Activity activityhandle = this;
+       // Activity activityhandle = this;
         fab.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -129,17 +118,13 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         });
 
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -156,44 +141,44 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         }
         switch (id){
             case R.id.action_today:
-                mWeekView.goToToday();
-                return true;
+            mWeekView.goToToday();
+            return true;
             case R.id.action_day_view:
-                if (mWeekViewType != TYPE_DAY_VIEW) {
-                    item.setChecked(!item.isChecked());
-                    mWeekViewType = TYPE_DAY_VIEW;
-                    mWeekView.setNumberOfVisibleDays(1);
+            if (mWeekViewType != TYPE_DAY_VIEW) {
+                item.setChecked(!item.isChecked());
+                mWeekViewType = TYPE_DAY_VIEW;
+                mWeekView.setNumberOfVisibleDays(1);
 
                     // Lets change some dimensions to best fit the view.
-                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                }
-                return true;
+                mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
+                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+            }
+            return true;
             case R.id.action_three_day_view:
-                if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
-                    item.setChecked(!item.isChecked());
-                    mWeekViewType = TYPE_THREE_DAY_VIEW;
-                    mWeekView.setNumberOfVisibleDays(3);
+            if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
+                item.setChecked(!item.isChecked());
+                mWeekViewType = TYPE_THREE_DAY_VIEW;
+                mWeekView.setNumberOfVisibleDays(3);
 
                     // Lets change some dimensions to best fit the view.
-                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                }
-                return true;
+                mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
+                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+            }
+            return true;
             case R.id.action_week_view:
-                if (mWeekViewType != TYPE_WEEK_VIEW) {
-                    item.setChecked(!item.isChecked());
-                    mWeekViewType = TYPE_WEEK_VIEW;
-                    mWeekView.setNumberOfVisibleDays(7);
+            if (mWeekViewType != TYPE_WEEK_VIEW) {
+                item.setChecked(!item.isChecked());
+                mWeekViewType = TYPE_WEEK_VIEW;
+                mWeekView.setNumberOfVisibleDays(7);
 
                     // Lets change some dimensions to best fit the view.
-                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
-                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
-                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
-                }
-                return true;
+                mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
+                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+            }
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -226,130 +211,129 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 // return hour > 11 ? (hour - 12) + " PM" : (hour == 0 ? "12 AM" : hour + " AM");
             }
         });
+}
+
+
+@Override
+public void onBackPressed() {
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    if (drawer.isDrawerOpen(GravityCompat.START)) {
+        drawer.closeDrawer(GravityCompat.START);
+    } else {
+        super.onBackPressed();
     }
+}
 
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    public boolean onNavigationItemSelected(MenuItem item) {
+@SuppressWarnings("StatementWithEmptyBody")
+public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        Fragment fragment = null;
-        Class fragmentClass = null;
+    int id = item.getItemId();
+    Fragment fragment = null;
+    Class fragmentClass = null;
 
-        if (id == R.id.nav_camera) {
-          //  fragmentClass = fragment_main.class;
-        } else if (id == R.id.nav_gallery) {
-          //  fragmentClass = fragment_day.class;
-        } else if (id == R.id.nav_slideshow) {
+    if (id == R.id.nav_camera) {
 
-        } else if (id == R.id.nav_manage) {
-         //   Intent intent = new Intent(BaseActivity.this, AsynchronousActivity.class);
-          //  startActivity(intent);
-        } else if (id == R.id.nav_share) {
+    } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_send) {
+    } else if (id == R.id.nav_slideshow) {
 
-        }
+    } else if (id == R.id.nav_manage) {
 
-        try {
-            if(fragmentClass!=null)
-                fragment = (Fragment) fragmentClass.newInstance();
+    } else if (id == R.id.nav_share) {
 
+    } else if (id == R.id.nav_send) {
+
+    }
+
+    try {
+        if(fragmentClass!=null) {
+            fragment = (Fragment) fragmentClass.newInstance();
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
 
-    protected String getEventTitle(Calendar time) {
-        return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
-    }
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    drawer.closeDrawer(GravityCompat.START);
+    return true;
+}
 
-    @Override
-    public void onEventClick(WeekViewEvent event, RectF eventRect) {
+protected String getEventTitle(Calendar time) {
+    return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
+}
+
+@Override
+public void onEventClick(WeekViewEvent event, RectF eventRect) {
       //  Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
-        createDialog(event.getName(),event.getStartTime().get(Calendar.HOUR) +":"+event.getStartTime().get(Calendar.MINUTE)+" - " + event.getEndTime().get(Calendar.HOUR) + ":" + event.getEndTime().get(Calendar.MINUTE) + " \n " + event.getLocation().toString()).show();
+    createDialog(event.getName(),event.getStartTime().get(Calendar.HOUR) +":"+event.getStartTime().get(Calendar.MINUTE)+" - " + event.getEndTime().get(Calendar.HOUR) + ":" + event.getEndTime().get(Calendar.MINUTE) + " \n " + event.getLocation().toString()).show();
 
-    }
+}
 
-    public Dialog createDialog(String title, String text){
-        return new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(text)
-                .setPositiveButton(android.R.string.ok, null)
-                .create();
-    }
+public Dialog createDialog(String title, String text){
+    return new AlertDialog.Builder(this)
+    .setTitle(title)
+    .setMessage(text)
+    .setPositiveButton(android.R.string.ok, null)
+    .create();
+}
 
-    @Override
-    public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
-    }
+@Override
+public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
+    Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
+}
 
-    @Override
-    public void onEmptyViewLongPress(Calendar time) {
-        Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
-    }
+@Override
+public void onEmptyViewLongPress(Calendar time) {
+    Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
+}
 
-    public WeekView getWeekView() {
-        return mWeekView;
-    }
+public WeekView getWeekView() {
+    return mWeekView;
+}
 
-    @Override
-    public void processFinish(ArrayList<WeekViewEvent> eventz){
-        this.events.clear();
+@Override
+public void processFinish(ArrayList<WeekViewEvent> eventz){
+    this.events.clear();
         //Yes l'effet de bohr tavu
-        this.events=eventz;
+    this.events=eventz;
 
-        ListView list_data = (ListView) findViewById(R.id.list_data);
-        ArrayList<String> data = new ArrayList<String>();
-        for (WeekViewEvent event : events) {
-            data.add(event.toString());
+    ListView list_data = (ListView) findViewById(R.id.list_data);
+    ArrayList<String> data = new ArrayList<String>();
+    for (WeekViewEvent event : events) {
+        data.add(event.toString());
+    }
+
+    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
+    list_data.setAdapter(adapter);
+
+
+    WeekViewLoader wk = new WeekViewLoader() {
+        int i=0;
+        @Override
+        public double toWeekViewPeriodIndex(Calendar instance) {
+            return 0;
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
-        list_data.setAdapter(adapter);
-
-
-        WeekViewLoader wk = new WeekViewLoader() {
-            int i=0;
-            @Override
-            public double toWeekViewPeriodIndex(Calendar instance) {
-                return 0;
+        @Override
+        public List<? extends WeekViewEvent> onLoad(int periodIndex) {
+            i++;
+            if(i==3) {
+                i=0;
+                return events;
             }
-
-            @Override
-            public List<? extends WeekViewEvent> onLoad(int periodIndex) {
-                i++;
-                if(i==3) {
-                    i=0;
-                    return events;
-                }
-                else{
-                    return new ArrayList<WeekViewEvent>();
-                }
+            else{
+                return new ArrayList<WeekViewEvent>();
             }
+        }
 
-        };
+    };
 
-        mWeekView.setWeekViewLoader(wk);
-        mWeekView.notifyDatasetChanged();
-    }
+    mWeekView.setWeekViewLoader(wk);
+    mWeekView.notifyDatasetChanged();
+}
 
 
 

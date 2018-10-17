@@ -43,52 +43,52 @@ public class CalendarEntry {
 	}
 
 	public static int monthAsInt(String month){
-	    int iMonth;
-	    switch(month.toUpperCase().substring(0, Math.min(month.length(), 3))){
-            case "JAN":
-                iMonth = 1;
-            break;
-            case "FEB":
-                iMonth = 2;
-            break;
-            case "MAR":
-                iMonth = 3;
-            break;
-            case "APR":
-                iMonth = 4;
-            break;
-            case "MAY":
-                iMonth = 5;
-            break;
-            case "JUN":
-                iMonth = 6;
-            break;
-            case "JUL":
-                iMonth = 7;
-            break;
-            case "AUG":
-                iMonth = 8;
-            break;
-            case "SEP":
-                iMonth = 9;
-            break;
-            case "OCT":
-                iMonth = 10;
-            break;
-            case "NOV":
-                iMonth = 11;
-            break;
-            case "DEC":
-                iMonth = 12;
-            break;
-            default:
-                iMonth = 0;
-            break;
+		int iMonth;
+		switch(month.toUpperCase().substring(0, Math.min(month.length(), 3))){
+			case "JAN":
+			iMonth = 1;
+			break;
+			case "FEB":
+			iMonth = 2;
+			break;
+			case "MAR":
+			iMonth = 3;
+			break;
+			case "APR":
+			iMonth = 4;
+			break;
+			case "MAY":
+			iMonth = 5;
+			break;
+			case "JUN":
+			iMonth = 6;
+			break;
+			case "JUL":
+			iMonth = 7;
+			break;
+			case "AUG":
+			iMonth = 8;
+			break;
+			case "SEP":
+			iMonth = 9;
+			break;
+			case "OCT":
+			iMonth = 10;
+			break;
+			case "NOV":
+			iMonth = 11;
+			break;
+			case "DEC":
+			iMonth = 12;
+			break;
+			default:
+			iMonth = 0;
+			break;
 
-        }
+		}
 
-        return iMonth;
-    }
+		return iMonth;
+	}
 
 	public int getStartY(){
 		return Integer.parseInt(startY);

@@ -22,7 +22,7 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, Arra
     public AsyncTaskGetEventsEntries(AsyncResponse delegate, Context ctx){
         this.delegate=delegate;
         this.context=ctx;
-        }
+    }
 
     @Override
     protected ArrayList<CalendarEntry> doInBackground(Boolean... unused) {
@@ -39,24 +39,24 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, Arra
 
     @Override
     protected void onPostExecute(ArrayList<CalendarEntry> calEvents) {
-       super.onPostExecute(calEvents);
-       ArrayList<String> strings = new ArrayList<>();
-            events.clear();
-            for (CalendarEntry calEvent : calEvents) {
-                WeekViewEvent tmpEvent = CalendarEntryParser.parseEntry(context,calEvent);
-                    if(tmpEvent!=null){
-                        if(calEvent.getMatiere().toUpperCase().equals("SVP")) {
-                            Log.e("XXX", String.valueOf(calEvent.getStartH())+"H"+String.valueOf(calEvent.getStartM()) + " -- " + String.valueOf(calEvent.getEndH())+"H"+String.valueOf(calEvent.getEndM()));
-                            this.events.add(tmpEvent);
-                        }
-                    }
-                }
-
-        delegate.processFinish(events);
+     super.onPostExecute(calEvents);
+     ArrayList<String> strings = new ArrayList<>();
+     events.clear();
+     for (CalendarEntry calEvent : calEvents) {
+        WeekViewEvent tmpEvent = CalendarEntryParser.parseEntry(context,calEvent);
+        if(tmpEvent!=null){
+            if(calEvent.getMatiere().toUpperCase().equals("SVP")) {
+                Log.e("XXX", String.valueOf(calEvent.getStartH())+"H"+String.valueOf(calEvent.getStartM()) + " -- " + String.valueOf(calEvent.getEndH())+"H"+String.valueOf(calEvent.getEndM()));
+                this.events.add(tmpEvent);
+            }
+        }
     }
 
-    protected String getEventTitle(Calendar time) {
-        return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
-    }
+    delegate.processFinish(events);
+}
+
+protected String getEventTitle(Calendar time) {
+    return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
+}
 }
 

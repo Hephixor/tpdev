@@ -138,7 +138,7 @@ public class CalendarMaker {
 			//End Time
 			String[] eue = vEvent.getDateEnd().getValue().toString().split(" ");
 			String endD = eue[2];
-            String endM = eue[1];
+			String endM = eue[1];
 			String endT = eue[3];
 			String endY = eue[5];
 			

@@ -76,12 +76,12 @@ public class ICSDownloader {
 		con.disconnect();
 		BufferedWriter writer = null;
 		if(overwrite) {
-		 writer = new BufferedWriter(new FileWriter(file.getName(),false));
+			writer = new BufferedWriter(new FileWriter(file.getName(),false));
 		 //writer.write("----------------------------OVERWRITING-------------------------\n\r");
 		}
 		else {
-		 writer = new BufferedWriter(new FileWriter(file.getName(),true));	
-		 
+			writer = new BufferedWriter(new FileWriter(file.getName(),true));	
+			
 		}
 		writer.write(content.toString());
 		writer.flush();
