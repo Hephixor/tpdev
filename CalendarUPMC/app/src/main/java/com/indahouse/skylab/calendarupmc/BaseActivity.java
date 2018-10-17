@@ -22,6 +22,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,8 +31,11 @@ import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.alamkanak.weekview.WeekViewLoader;
+import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncResponse;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,12 +48,13 @@ import java.util.Locale;
  * Created by Raquib-ul-Alam Kanak on 1/3/2014.
  * Website: http://alamkanak.github.io
  */
-public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
+public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener,AsyncResponse {
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
     private WeekView mWeekView;
+    private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
 
     @Override
@@ -59,6 +64,34 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+
+
+        // Get a reference for the week view in the layout.
+        mWeekView = (WeekView) findViewById(R.id.weekView);
+
+        // Show a toast message about the touched event.
+        mWeekView.setOnEventClickListener(this);
+
+        // The week view has infinite scrolling horizontally. We have to provide the events of a
+        // month every time the month changes on the week view.
+        mWeekView.setMonthChangeListener(this);
+
+        // Set long press listener for events.
+        mWeekView.setEventLongPressListener(this);
+
+        // Set long press listener for empty view
+        mWeekView.setEmptyViewLongPressListener(this);
+
+        mWeekView.goToHour(8);
+
+
+
+        // Set up a date time interpreter to interpret how the date and time will be formatted in
+        // the week view. This is optional.
+        setupDateTimeInterpreter(false);
+
 
 
 
@@ -83,12 +116,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             public void onClick(View view) {
                 ListView list_data = findViewById(R.id.list_data);
                 list_data.setBackgroundColor(Color.GRAY);
-                WeekView weekView = (WeekView) findViewById(R.id.weekView);
                 Boolean[] bool = new Boolean[1];
                 bool[0]=true;
 
                 if(list_data.getVisibility() == view.INVISIBLE){
-                    new AsyncTaskGetEventsEntries(BaseActivity.this, list_data,weekView).execute(bool[0]);
+                    new AsyncTaskGetEventsEntries(BaseActivity.this).execute(bool[0]);
                     list_data.setVisibility(View.VISIBLE);
                 }else{
                     list_data.setVisibility(View.INVISIBLE);
@@ -106,27 +138,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Get a reference for the week view in the layout.
-        mWeekView = (WeekView) findViewById(R.id.weekView);
-
-        // Show a toast message about the touched event.
-        mWeekView.setOnEventClickListener(this);
-
-        // The week view has infinite scrolling horizontally. We have to provide the events of a
-        // month every time the month changes on the week view.
-        mWeekView.setMonthChangeListener(this);
-
-        // Set long press listener for events.
-        mWeekView.setEventLongPressListener(this);
-
-        // Set long press listener for empty view
-        mWeekView.setEmptyViewLongPressListener(this);
-
-        mWeekView.goToHour(8);
-
-        // Set up a date time interpreter to interpret how the date and time will be formatted in
-        // the week view. This is optional.
-        setupDateTimeInterpreter(false);
     }
 
 
@@ -298,4 +309,49 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     public WeekView getWeekView() {
         return mWeekView;
     }
+
+    @Override
+    public void processFinish(ArrayList<WeekViewEvent> eventz){
+        this.events.clear();
+        //Yes l'effet de bohr tavu
+        this.events=eventz;
+
+        ListView list_data = (ListView) findViewById(R.id.list_data);
+        ArrayList<String> data = new ArrayList<String>();
+        for (WeekViewEvent event : events) {
+            data.add(event.toString());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
+        list_data.setAdapter(adapter);
+
+
+        WeekViewLoader wk = new WeekViewLoader() {
+            int i=0;
+            @Override
+            public double toWeekViewPeriodIndex(Calendar instance) {
+                return 0;
+            }
+
+            @Override
+            public List<? extends WeekViewEvent> onLoad(int periodIndex) {
+                i++;
+                if(i==3) {
+                    i=0;
+                    return events;
+                }
+                else{
+                    return new ArrayList<WeekViewEvent>();
+                }
+            }
+
+        };
+
+        mWeekView.setWeekViewLoader(wk);
+        mWeekView.notifyDatasetChanged();
+    }
+
+
+
+
 }

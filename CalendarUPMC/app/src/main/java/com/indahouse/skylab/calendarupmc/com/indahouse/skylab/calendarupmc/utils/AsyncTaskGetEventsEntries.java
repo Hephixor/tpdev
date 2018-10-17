@@ -9,32 +9,22 @@ import android.widget.ListView;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.alamkanak.weekview.WeekViewLoader;
+import com.indahouse.skylab.calendarupmc.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-//a mettre quelquepart
-/*ListView list_data = fragment_view.findViewById(R.id.list_data);
-        new AsyncTaskGetEventsEntries(getActivity(), list_data).execute("");*/
-
 
 public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, ArrayList<CalendarEntry>> {
 
-    private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
-    private WeekView mWeekView;
+    private ArrayList<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     private ArrayList<CalendarEntry> calEvents = new ArrayList<>();
-    private ArrayList<String> data = new ArrayList<String>();
+    public AsyncResponse delegate = null;
 
 
-
-    Activity context;
-    ListView view;
-
-    public AsyncTaskGetEventsEntries(Activity ctx, ListView v, WeekView weekView){
-        context = ctx;
-        view = v;
-        mWeekView = weekView;
+    public AsyncTaskGetEventsEntries(AsyncResponse delegate){
+        this.delegate=delegate;
         }
 
     @Override
@@ -57,37 +47,15 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, Arra
        ArrayList<String> strings = new ArrayList<>();
             events.clear();
             for (CalendarEntry calEvent : calEvents) {
-                if(calEvent.getMatiere().toUpperCase().equals("PPC")) {
-                    WeekViewEvent tmpEvent = CalendarEntryParser.parseEntry(calEvent);
+                WeekViewEvent tmpEvent = CalendarEntryParser.parseEntry(calEvent);
                     if(tmpEvent!=null){
-                      data.add(calEvent.toString());
-                      this.events.add(tmpEvent);
+                     this.events.add(tmpEvent);
                     }
                 }
-            }
 
             Log.e("Event List Size ", String.valueOf(events.size()));
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, data);
-            view.setAdapter(adapter);
-
-        WeekViewLoader wk = new WeekViewLoader() {
-            int i=0;
-            @Override
-            public double toWeekViewPeriodIndex(Calendar instance) {
-                return 0;
-            }
-
-            @Override
-            public List<? extends WeekViewEvent> onLoad(int periodIndex) {
-                return events;
-            }
-
-        };
-
-        mWeekView.setWeekViewLoader(wk);
-
-            mWeekView.notifyDatasetChanged();
+        delegate.processFinish(events);
     }
 
     protected String getEventTitle(Calendar time) {

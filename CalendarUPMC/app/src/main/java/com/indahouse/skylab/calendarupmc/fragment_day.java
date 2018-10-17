@@ -92,7 +92,7 @@ public class fragment_day extends Fragment {
 
         WeekView weekView = (WeekView) fragment_view.findViewById(R.id.weekView);
         ListView list_data = fragment_view.findViewById(R.id.list_data);
-        new AsyncTaskGetEventsEntries(getActivity(), list_data, weekView).execute(true);
+       // new AsyncTaskGetEventsEntries(getActivity(), list_data, weekView).execute(true);
 
         return fragment_view;
     }

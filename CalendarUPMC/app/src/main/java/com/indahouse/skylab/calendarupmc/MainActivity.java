@@ -1,5 +1,6 @@
 package com.indahouse.skylab.calendarupmc;
 
+import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -158,6 +159,8 @@ public class MainActivity extends BaseActivity{
         event.setColor(getResources().getColor(R.color.event_color_01));
         events.add(event); */
 
+        WeekView weekView = findViewById(R.id.weekView);
+        weekView.notifyDatasetChanged();
         return events;
     }
 
