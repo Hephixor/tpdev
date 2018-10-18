@@ -1,5 +1,7 @@
 package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
 
+import android.util.Log;
+
 import java.util.Arrays;
 
 public class CalendarEntry {
@@ -106,12 +108,13 @@ public class CalendarEntry {
 
 	public int getStartM(){
 		String[] sMinute = this.startT.split(":");
-		String ssMinute = Arrays.toString(sMinute);
-		if(ssMinute.length()==1){
-			ssMinute+="0";
+		String ssMinute = sMinute[1];
+
+/*		if(Integer.parseInt(ssMinute) < 10){
+			ssMinute=ssMinute+"0";
 		}
-		int minute = Integer.parseInt(sMinute[1]);
-		return minute;
+*/
+		return Integer.parseInt(ssMinute);
 	}
 
 	public int getEndY(){
@@ -130,12 +133,13 @@ public class CalendarEntry {
 
 	public int getEndM(){
 		String[] sMinute = this.endT.split(":");
-		String ssMinute = Arrays.toString(sMinute);
-		if(ssMinute.length()==1){
-			ssMinute+="0";
+		String ssMinute = sMinute[1];
+
+/*		if(Integer.parseInt(ssMinute) < 10){
+			ssMinute=ssMinute+"0";
 		}
-		int minute = Integer.parseInt(sMinute[1]);
-		return minute;
+*/
+		return Integer.parseInt(ssMinute);
 	}
 	
 	public boolean getSuivi() {

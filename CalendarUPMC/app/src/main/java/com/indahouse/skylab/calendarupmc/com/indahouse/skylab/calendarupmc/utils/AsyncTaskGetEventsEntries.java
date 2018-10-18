@@ -42,15 +42,14 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, Arra
      super.onPostExecute(calEvents);
      ArrayList<String> strings = new ArrayList<>();
      events.clear();
+        WeekViewEvent tmpEvent;
      for (CalendarEntry calEvent : calEvents) {
-        WeekViewEvent tmpEvent = CalendarEntryParser.parseEntry(context,calEvent);
-        if(tmpEvent!=null){
-            if(calEvent.getMatiere().toUpperCase().equals("SVP")) {
-                Log.e("XXX", String.valueOf(calEvent.getStartH())+"H"+String.valueOf(calEvent.getStartM()) + " -- " + String.valueOf(calEvent.getEndH())+"H"+String.valueOf(calEvent.getEndM()));
-                this.events.add(tmpEvent);
-            }
-        }
+         if(calEvent.getStartY() == Calendar.getInstance().get(Calendar.YEAR) || calEvent.getStartY() == Calendar.getInstance().get(Calendar.YEAR) +1 ) {
+                 tmpEvent = CalendarEntryParser.parseEntry(context, calEvent);
+                 this.events.add(tmpEvent);
+                   }
     }
+
 
     delegate.processFinish(events);
 }

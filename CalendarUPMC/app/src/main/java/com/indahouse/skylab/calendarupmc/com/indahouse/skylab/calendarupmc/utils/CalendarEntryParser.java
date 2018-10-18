@@ -1,15 +1,13 @@
 package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
-
-import com.alamkanak.weekview.WeekViewEvent;
-import com.indahouse.skylab.calendarupmc.BaseActivity;
-import com.indahouse.skylab.calendarupmc.R;
 
 import java.util.Calendar;
 import java.util.Random;
+
+import com.alamkanak.weekview.WeekViewEvent;
+import com.indahouse.skylab.calendarupmc.R;
 
 public class CalendarEntryParser {
 
@@ -19,26 +17,27 @@ public class CalendarEntryParser {
 
     public static WeekViewEvent parseEntry(Context ctx, CalendarEntry calendarEntry){
 
-        if(calendarEntry.getStartY() == Calendar.getInstance().get(Calendar.YEAR) || calendarEntry.getStartY() == Calendar.getInstance().get(Calendar.YEAR) +1 ){
             // IL,4I502,Consultation Copies,Salle SAR (14.15.508),02,13:00:00,Jul,2018,Jul,2018,02,14:00:00,true
             Random rand = new Random();
             WeekViewEvent wEvent;
 
             Calendar startTime = Calendar.getInstance();
-
-            startTime.set(Calendar.DATE, Integer.parseInt(calendarEntry.getStartD()));
+            startTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(calendarEntry.getStartD()));
             startTime.set(Calendar.HOUR_OF_DAY, calendarEntry.getStartH());
             startTime.set(Calendar.MINUTE, calendarEntry.getStartM());
             startTime.set(Calendar.MONTH, calendarEntry.monthAsInt(calendarEntry.getStartMo()));
             startTime.set(Calendar.YEAR, calendarEntry.getStartY());
 
-            Calendar endTime = (Calendar) startTime.clone();
-            endTime.add(Calendar.HOUR, calendarEntry.getEndH());
-            endTime.add(Calendar.MINUTE, calendarEntry.getEndM());
+            Calendar endTime = Calendar.getInstance();
+            endTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(calendarEntry.getEndD()));
+            endTime.set(Calendar.HOUR_OF_DAY, calendarEntry.getEndH());
+            endTime.set(Calendar.MINUTE, calendarEntry.getEndM());
             endTime.set(Calendar.MONTH, calendarEntry.monthAsInt(calendarEntry.getEndMo()));
+            endTime.set(Calendar.YEAR, calendarEntry.getEndY());
 
-            wEvent = new WeekViewEvent(rand.nextInt(100000), getEventTitle(startTime), "\n\n"+calendarEntry.getLocation(), startTime, endTime);
-            wEvent.setName(calendarEntry.getMatiere());
+
+        wEvent = new WeekViewEvent(rand.nextInt(100000), getEventTitle(startTime), "\n\n"+calendarEntry.getLocation(), startTime, endTime);
+        wEvent.setName(calendarEntry.getMatiere());
 
             switch (rand.nextInt(4)){
                 case 0:
@@ -57,11 +56,10 @@ public class CalendarEntryParser {
                 break;
             }
 
-            return wEvent;
-        }
-        else{
-            return null;
-        }
+        Log.e("XXX 1 EVENT", wEvent.getStartTime().get(Calendar.HOUR_OF_DAY) + " to " + wEvent.getEndTime().get(Calendar.HOUR_OF_DAY));
+
+
+        return wEvent;
 
     }
 

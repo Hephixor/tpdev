@@ -81,7 +81,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
-        setupDateTimeInterpreter(true);
+        setupDateTimeInterpreter(false);
 
 
      /*   //Fragments
@@ -205,10 +205,13 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 return weekday.toUpperCase() + format.format(date.getTime());
             }
 
-            @Override
-            public String interpretTime(int hour) {
-                return String.valueOf(hour);
-                // return hour > 11 ? (hour - 12) + " PM" : (hour == 0 ? "12 AM" : hour + " AM");
+            @Override public String interpretTime(int hour) {
+                if(hour<10){
+                    return "0"+hour;
+                }
+                else {
+                    return String.valueOf(hour);
+                }
             }
         });
 }
@@ -268,7 +271,22 @@ protected String getEventTitle(Calendar time) {
 @Override
 public void onEventClick(WeekViewEvent event, RectF eventRect) {
       //  Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
-    createDialog(event.getName(),event.getStartTime().get(Calendar.HOUR) +":"+event.getStartTime().get(Calendar.MINUTE)+" - " + event.getEndTime().get(Calendar.HOUR) + ":" + event.getEndTime().get(Calendar.MINUTE) + " \n " + event.getLocation().toString()).show();
+    String sHour = String.valueOf(event.getStartTime().get(Calendar.HOUR_OF_DAY));
+    String sMinute = String.valueOf(event.getStartTime().get(Calendar.MINUTE));
+    if(event.getStartTime().get(Calendar.MINUTE)<10){
+        sMinute+="0";
+    }
+
+    String eHour = String.valueOf(event.getEndTime().get(Calendar.HOUR_OF_DAY));
+    String eMinute = String.valueOf(event.getEndTime().get(Calendar.MINUTE));
+    if(event.getEndTime().get(Calendar.MINUTE)<10){
+        sMinute+="0";
+    }
+
+    String location = event.getLocation();
+    String name = event.getName();
+
+    createDialog(name, sHour + ":" + sMinute + " - " + eHour + ":" + eMinute + " \n " + location).show();
 
 }
 
