@@ -9,11 +9,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
+import biweekly.property.RecurrenceDates;
+import biweekly.util.Frequency;
+import biweekly.util.com.google.ical.compat.javautil.DateIterator;
 import biweekly.util.org.apache.commons.codec.binary.Base64;
 
 public class CalendarMaker {
@@ -32,28 +39,6 @@ public class CalendarMaker {
 	public void caldown() {
 		ICSDownloader icsdown = new ICSDownloader();	
 		icsdown.downloadICS(urls);
-	}
-
-	public static void parseUE(String ue) {
-		String[] pue = ue.split("-");
-		System.out.println("Matière : " + pue[pue.length-1]);
-		if(pue.length>1)
-			System.out.println("Code : " + pue[0]);
-		
-		if(pue.length>2)
-			System.out.println("Type : " + pue[1]);
-	}
-
-	public static void parseStartTime(String ue) {
-		String[] pue = ue.split(" ");
-		System.out.println("Start day : " + pue[0] + " " + pue[2] + " " + pue[1]);
-		System.out.println("Start time : " + pue[3]);
-	}
-
-	public static void parseEndTime(String ue) {
-		String[] pue = ue.split(" ");
-		System.out.println("End day : " + pue[0] + " " + pue[2] + " " + pue[1]);
-		System.out.println("End time : " + pue[3]);
 	}
 
 	public List<VEvent> getEventCollection() {
@@ -82,20 +67,8 @@ public class CalendarMaker {
 			con.disconnect();
 
 			String calendar = content.toString();
-			//System.out.println(calendar);
-
 			ICalendar ical = Biweekly.parse(calendar).first();
 			events = ical.getEvents();
-
-//			for (VEvent vEvent : events) {
-//				System.out.println("---------------------");
-//				parseUE(vEvent.getSummary().getValue());
-//				parseStartTime(vEvent.getDateStart().getValue().toString());
-//				parseEndTime(vEvent.getDateEnd().getValue().toString());
-//				System.out.println("---------------------");
-//				System.out.println();
-//			}
-
 
 		} catch (MalformedURLException e) {
 			System.out.println("Malformed URL");
@@ -113,8 +86,15 @@ public class CalendarMaker {
 		
 		for (VEvent vEvent : events) {
 			//Details
+
 			String[] pue = vEvent.getSummary().getValue().split("-");
 			String matiere =  pue[pue.length-1];
+			/* if(matiere.equals("TAS")){
+			    Log.e("XXX PARSER", vEvent.getDateStart().getValue().toString());
+            } */
+
+
+
 			String code = "";
 			String type = "";
 			String location = "";
@@ -134,7 +114,9 @@ public class CalendarMaker {
 			String startM = tue[1];
 			String startT = tue[3];
 			String startY = tue[5];
-			
+
+
+
 			//End Time
 			String[] eue = vEvent.getDateEnd().getValue().toString().split(" ");
 			String endD = eue[2];
@@ -143,7 +125,46 @@ public class CalendarMaker {
 			String endY = eue[5];
 			
 			CalendarEntry tmpCal = new CalendarEntry(matiere,code,type,location,startY,startM,startD,startT,endY,endM,endD,endT);
-			Log.e("Entry" ,String.valueOf(tmpCal.toString()));
+		//	Log.e("Entry" ,String.valueOf(tmpCal.toString()));
+            if(vEvent.getRecurrenceRule()!=null){
+                switch (vEvent.getRecurrenceRule().getValue().getFrequency()){
+                    case DAILY:
+                        tmpCal.setFrequency(Frequency.DAILY);
+                        break;
+                    case WEEKLY:
+                        tmpCal.setFrequency(Frequency.WEEKLY);
+                        break;
+                    case MONTHLY:
+                        tmpCal.setFrequency(Frequency.MONTHLY);
+                        break;
+                    case YEARLY:
+                        tmpCal.setFrequency(Frequency.YEARLY);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if(matiere.equals("TAS") && startY.equals("2018")) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(startD));
+                cal.set(Calendar.MONTH, CalendarEntry.monthAsInt(startM));
+                cal.set(Calendar.YEAR, Integer.parseInt(startY));
+
+                Date date = cal.getTime();
+
+                if (vEvent.getRecurrenceRule() != null) {
+                    DateIterator di = vEvent.getRecurrenceRule().getDateIterator(date, TimeZone.getDefault());
+                    List<RecurrenceDates> listRec = vEvent.getRecurrenceDates();
+                    for (RecurrenceDates rec : listRec) {
+                        Log.e("XXX PARSING",rec.getDates().toString());
+                    }
+                   // Log.e("XXX PARSING", date.toString());
+                    //Log.e("XXX PARSING", matiere + " " + startD + "/" + startM + "/" + startY);
+                    //Log.e("XXX PARSING", "Repetitions " );
+                }
+            }
+
 			CalEvents.add(tmpCal);
 		}
 		

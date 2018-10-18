@@ -25,14 +25,17 @@ public class CalendarEntryParser {
             startTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(calendarEntry.getStartD()));
             startTime.set(Calendar.HOUR_OF_DAY, calendarEntry.getStartH());
             startTime.set(Calendar.MINUTE, calendarEntry.getStartM());
-            startTime.set(Calendar.MONTH, calendarEntry.monthAsInt(calendarEntry.getStartMo()));
+            startTime.set(Calendar.MONTH, CalendarEntry.monthAsInt(calendarEntry.getStartMo())-1);
             startTime.set(Calendar.YEAR, calendarEntry.getStartY());
 
-            Calendar endTime = Calendar.getInstance();
+         //   Log.e("XXX Calendar entry", calendarEntry.getStartD()+"/"+CalendarEntry.monthAsInt(calendarEntry.getStartMo())+"/"+calendarEntry.getStartY());
+          //  Log.e("XXX 1 EVENT DATE", startTime.get(Calendar.DAY_OF_MONTH)+"/"+startTime.get(Calendar.MONTH)+"/"+startTime.get(Calendar.YEAR));
+
+        Calendar endTime = Calendar.getInstance();
             endTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(calendarEntry.getEndD()));
             endTime.set(Calendar.HOUR_OF_DAY, calendarEntry.getEndH());
             endTime.set(Calendar.MINUTE, calendarEntry.getEndM());
-            endTime.set(Calendar.MONTH, calendarEntry.monthAsInt(calendarEntry.getEndMo()));
+            endTime.set(Calendar.MONTH, calendarEntry.monthAsInt(calendarEntry.getEndMo())-1);
             endTime.set(Calendar.YEAR, calendarEntry.getEndY());
 
 
@@ -55,8 +58,6 @@ public class CalendarEntryParser {
                 default:
                 break;
             }
-
-        Log.e("XXX 1 EVENT", wEvent.getStartTime().get(Calendar.HOUR_OF_DAY) + " to " + wEvent.getEndTime().get(Calendar.HOUR_OF_DAY));
 
 
         return wEvent;

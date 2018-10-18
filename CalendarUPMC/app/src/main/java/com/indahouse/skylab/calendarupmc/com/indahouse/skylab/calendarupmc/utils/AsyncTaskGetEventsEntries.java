@@ -28,6 +28,7 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, Arra
     protected ArrayList<CalendarEntry> doInBackground(Boolean... unused) {
         String urls = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
         CalendarMaker cm = new CalendarMaker(urls);
+        cm.caldown();
         ArrayList<CalendarEntry> cal = cm.getEventsEntries(cm.getEventCollection());
 
         return cal;
@@ -45,11 +46,12 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<Boolean , Integer, Arra
         WeekViewEvent tmpEvent;
      for (CalendarEntry calEvent : calEvents) {
          if(calEvent.getStartY() == Calendar.getInstance().get(Calendar.YEAR) || calEvent.getStartY() == Calendar.getInstance().get(Calendar.YEAR) +1 ) {
+            // if(calEvent.getMatiere().equals("TAS")) {
                  tmpEvent = CalendarEntryParser.parseEntry(context, calEvent);
                  this.events.add(tmpEvent);
-                   }
+            // }
+         }
     }
-
 
     delegate.processFinish(events);
 }

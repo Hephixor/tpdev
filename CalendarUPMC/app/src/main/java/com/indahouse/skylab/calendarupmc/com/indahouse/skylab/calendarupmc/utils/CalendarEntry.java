@@ -4,6 +4,8 @@ import android.util.Log;
 
 import java.util.Arrays;
 
+import biweekly.util.Frequency;
+
 public class CalendarEntry {
 	private String matiere;
 	private String code;
@@ -18,6 +20,7 @@ public class CalendarEntry {
 	private String endM;
 	private String endY;
 	private boolean suivi;
+	private Frequency frequency;
 	// color ?
 	
 	
@@ -35,13 +38,34 @@ public class CalendarEntry {
 		this.endD=endD;
 		this.endT=endT;
 		this.suivi=true;
+		this.frequency=null;
 	}
 	
 	
 
 	@Override
 	public String toString() {
-		return matiere + "," + code + "," + type + ","+location+"," + startD+"," + startT + "," + startM+"," + startY + "," + endM + "," + endY + "," + endD + "," + endT + "," + suivi;
+		return matiere + "," + code + "," + type + ","+location+","
+                + startD+"," + startT + "," + startM+"," + startY
+                + "," + endM + "," + endY + "," + endD + "," + endT
+                + "," + suivi+","+frequency.toString();
+	}
+
+	public boolean hasRepetition(){
+	    if(this.frequency==null){
+	        return false;
+        }
+        else{
+	        return true;
+        }
+    }
+
+	public Frequency getFrequency(){
+		return this.frequency;
+	}
+
+	public void setFrequency(Frequency freq){
+		this.frequency = freq;
 	}
 
 	public static int monthAsInt(String month){
