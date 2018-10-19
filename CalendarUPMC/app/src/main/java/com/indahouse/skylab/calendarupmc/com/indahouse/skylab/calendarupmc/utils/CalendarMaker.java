@@ -21,6 +21,9 @@ import biweekly.component.VEvent;
 import biweekly.property.RecurrenceDates;
 import biweekly.util.Frequency;
 import biweekly.util.com.google.ical.compat.javautil.DateIterator;
+import biweekly.util.com.google.ical.compat.javautil.DateIteratorFactory;
+import biweekly.util.com.google.ical.iter.RecurrenceIterator;
+import biweekly.util.com.google.ical.values.DateValue;
 import biweekly.util.org.apache.commons.codec.binary.Base64;
 
 public class CalendarMaker {
@@ -145,25 +148,7 @@ public class CalendarMaker {
                 }
             }
 
-            if(matiere.equals("TAS") && startY.equals("2018")) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(startD));
-                cal.set(Calendar.MONTH, CalendarEntry.monthAsInt(startM));
-                cal.set(Calendar.YEAR, Integer.parseInt(startY));
 
-                Date date = cal.getTime();
-
-                if (vEvent.getRecurrenceRule() != null) {
-                    DateIterator di = vEvent.getRecurrenceRule().getDateIterator(date, TimeZone.getDefault());
-                    List<RecurrenceDates> listRec = vEvent.getRecurrenceDates();
-                    for (RecurrenceDates rec : listRec) {
-                        Log.e("XXX PARSING",rec.getDates().toString());
-                    }
-                   // Log.e("XXX PARSING", date.toString());
-                    //Log.e("XXX PARSING", matiere + " " + startD + "/" + startM + "/" + startY);
-                    //Log.e("XXX PARSING", "Repetitions " );
-                }
-            }
 
 			CalEvents.add(tmpCal);
 		}

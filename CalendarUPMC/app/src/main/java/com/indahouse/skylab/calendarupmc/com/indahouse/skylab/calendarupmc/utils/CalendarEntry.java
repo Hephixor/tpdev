@@ -2,7 +2,9 @@ package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.util
 
 import android.util.Log;
 
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 
 import biweekly.util.Frequency;
 
@@ -40,16 +42,22 @@ public class CalendarEntry {
 		this.suivi=true;
 		this.frequency=null;
 	}
-	
-	
+
 
 	@Override
 	public String toString() {
-		return matiere + "," + code + "," + type + ","+location+","
+		String str =  matiere + "," + code + "," + type + ","+location+","
                 + startD+"," + startT + "," + startM+"," + startY
                 + "," + endM + "," + endY + "," + endD + "," + endT
-                + "," + suivi+","+frequency.toString();
-	}
+                + "," + suivi+",";
+		if(frequency!=null) {
+            str += frequency.toString();
+        }
+        else{
+		    str+="no-repeat";
+        }
+        return str;
+        }
 
 	public boolean hasRepetition(){
 	    if(this.frequency==null){
