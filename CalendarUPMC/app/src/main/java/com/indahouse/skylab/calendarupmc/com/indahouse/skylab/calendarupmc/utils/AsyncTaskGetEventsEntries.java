@@ -16,18 +16,19 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<String, Integer, ArrayL
     public AsyncResponse delegate;
     public Context context;
     private ArrayList<WeekViewEvent> weekViewEvents;
+    private String url;
 
 
-    public AsyncTaskGetEventsEntries(AsyncResponse delegate, Context ctx) {
+    public AsyncTaskGetEventsEntries(AsyncResponse delegate, Context ctx, String urls) {
         this.delegate = delegate;
         this.context = ctx;
+        this.url = urls;
         weekViewEvents = new ArrayList<WeekViewEvent>();
     }
 
     @Override
     protected ArrayList<CalendarEntry> doInBackground(String... unused) {
-        String urls = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
-        CalendarMaker cm = new CalendarMaker(urls);
+        CalendarMaker cm = new CalendarMaker(url);
         ArrayList<CalendarEntry> cal = cm.toCalendarEntries(cm.downloadAndParseVEventsFromInternet());
 
         return cal;
@@ -42,21 +43,7 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<String, Integer, ArrayL
         super.onPostExecute(calEntries);
 
         weekViewEvents.clear();
-
         weekViewEvents = CalendarMaker.toWeekViewEvents(calEntries);
-
-        /*Log.d("MYTAG","calEntries ("+calEntries.size()+"), weekViewEvents ("+
-                weekViewEvents.size()+")");
-
-        for(CalendarEntry calentry : calEntries){
-            if(calentry.getSchedules().size() > 1){
-                Log.d("MYTAG",calentry.toString());
-                for(Schedule sched : calentry.getSchedules()){
-                    Log.d("MYTAG",sched.toString());
-                }
-                break;
-            }
-        }*/
 
         delegate.processFinish(weekViewEvents);
     }

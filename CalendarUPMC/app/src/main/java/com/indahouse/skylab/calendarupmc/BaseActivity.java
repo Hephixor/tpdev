@@ -55,6 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
     private WeekView mWeekView;
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+    private String url;
 
 
     @Override
@@ -78,9 +79,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         mWeekView.setEmptyViewLongPressListener(this);
         mWeekView.goToHour(8);
 
-
-        // Set up a date time interpreter to interpret how the date and time will be formatted in
-        // the week view. This is optional.
         setupDateTimeInterpreter(false);
 
 
@@ -97,19 +95,20 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         */
+
+        this.url = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-       // Activity activityhandle = this;
+
         fab.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 ListView list_data = findViewById(R.id.list_data);
                 list_data.setBackgroundColor(Color.GRAY);
-                Boolean[] bool = new Boolean[1];
-                bool[0]=true;
 
                 if(list_data.getVisibility() == view.INVISIBLE){
-                    new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this).execute("");
+                    new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this, url).execute("");
                     list_data.setVisibility(View.VISIBLE);
                 }else{
                     list_data.setVisibility(View.INVISIBLE);
@@ -184,11 +183,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Set up a date time interpreter which will show short date values when in week view and long
-     * date values otherwise.
-     * @param shortDate True if the date values should be short.
-     */
+
     private void setupDateTimeInterpreter(final boolean shortDate) {
         mWeekView.setDateTimeInterpreter(new DateTimeInterpreter() {
             @Override
@@ -197,9 +192,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 String weekday = weekdayNameFormat.format(date.getTime());
                 SimpleDateFormat format = new SimpleDateFormat(" d/M", Locale.getDefault());
 
-                // All android api level do not have a standard way of getting the first letter of
-                // the week day name. Hence we get the first char programmatically.
-                // Details: http://stackoverflow.com/questions/16959502/get-one-letter-abbreviation-of-week-day-of-a-date-in-java#answer-16959657
                 if (shortDate)
                     weekday = String.valueOf(weekday.charAt(0));
                 return weekday.toUpperCase() + format.format(date.getTime());
@@ -270,16 +262,15 @@ protected String getEventTitle(Calendar time) {
 
 @Override
 public void onEventClick(WeekViewEvent event, RectF eventRect) {
-      //  Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
     String sHour = String.valueOf(event.getStartTime().get(Calendar.HOUR_OF_DAY));
     String sMinute = String.valueOf(event.getStartTime().get(Calendar.MINUTE));
-    if(event.getStartTime().get(Calendar.MINUTE)<10){
+    if(event.getStartTime().get(Calendar.MINUTE)<10 && !(String.valueOf(event.getStartTime().get(Calendar.MINUTE)).equals("00"))){
         sMinute+="0";
     }
 
     String eHour = String.valueOf(event.getEndTime().get(Calendar.HOUR_OF_DAY));
     String eMinute = String.valueOf(event.getEndTime().get(Calendar.MINUTE));
-    if(event.getEndTime().get(Calendar.MINUTE)<10){
+    if(event.getEndTime().get(Calendar.MINUTE)<10 && !(String.valueOf(event.getEndTime().get(Calendar.MINUTE)).equals("00"))){
         sMinute+="0";
     }
 
@@ -300,12 +291,12 @@ public Dialog createDialog(String title, String text){
 
 @Override
 public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-    Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
+   // Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
 }
 
 @Override
 public void onEmptyViewLongPress(Calendar time) {
-    Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
+  //  Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
 }
 
 public WeekView getWeekView() {
@@ -316,6 +307,30 @@ public WeekView getWeekView() {
 public void processFinish(ArrayList<WeekViewEvent> eventz){
     this.events.clear();
         //Yes l'effet de bohr tavu
+
+    for (WeekViewEvent event: eventz) {
+
+        switch(event.getName().toUpperCase().substring(0,3)){
+            case "TAS":
+                Log.e("XXX"," Je suis TAS");
+                event.setColor(getResources().getColor(R.color.event_color_01));
+                break;
+            case "DAR":
+                event.setColor(getResources().getColor(R.color.event_color_02));
+                break;
+            case "SVP":
+                event.setColor(getResources().getColor(R.color.event_color_03));
+                break;
+            case "PPC":
+                event.setColor(getResources().getColor(R.color.event_color_04));
+                break;
+                default:
+                    Log.e("XXX"," Je suis " +  event.getName().toUpperCase().substring(0,3));
+                    break;
+        }
+
+    }
+
     this.events=eventz;
 
     ListView list_data = (ListView) findViewById(R.id.list_data);

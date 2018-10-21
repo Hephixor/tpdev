@@ -96,6 +96,7 @@ public class CalendarMaker {
             if (vEvent.getLocation() != null) {
                 location = vEvent.getLocation().getValue();
             }
+
             int color = generateRandomColor();
 
             CalendarEntry tmpCal = new CalendarEntry(matiere,code,type,location,color);
@@ -117,7 +118,7 @@ public class CalendarMaker {
             int duree_min = end_min - start_min;
             assert (duree_hour >= 0 && duree_min >= 0);
 
-            /*iterateur sur les repetitions du vEvent (sans les exceptions*/
+            /* iterateur sur les repetitions du vEvent (sans les exceptions) */
             DateIterator iterator = vEvent.getDateIterator(Calendar.getInstance().getTimeZone());
             while(iterator.hasNext()) {
                 Date startDate = iterator.next();
@@ -146,17 +147,19 @@ public class CalendarMaker {
 
         WeekViewEvent tmpWVEvent;
         for (CalendarEntry calEntry : calentries) {
-            for(Schedule sched : calEntry.getSchedules()){
-                if (sched.getStartTime().get(Calendar.YEAR) == thisYear ||
-                        sched.getStartTime().get(Calendar.YEAR) == thisYear+1) {
+                for (Schedule sched : calEntry.getSchedules()) {
+                    if (sched.getStartTime().get(Calendar.YEAR) == thisYear ||
+                            sched.getStartTime().get(Calendar.YEAR) == thisYear + 1) {
+                        tmpWVEvent = new WeekViewEvent(generateWVEId(),
+                                calEntry.getMatiere() + " " + sched.getStartTimeHM() + " " + sched.getStartTimeDMY() +
+                                        "\n\n" + calEntry.getLocation(), sched.getStartTime(), sched.getEndTime());
 
-                    tmpWVEvent = new WeekViewEvent(generateWVEId(),
-                            calEntry.getMatiere() + " " + sched.getStartTimeHM() + " " + sched.getStartTimeDMY() +
-                                    "\n\n" + calEntry.getLocation(), sched.getStartTime(), sched.getEndTime());
-
-                    weekViewEvents.add(tmpWVEvent);
+                        int randColor = generateRandomColor();
+                        Log.e("Color", String.valueOf(randColor));
+                        tmpWVEvent.setColor(randColor);
+                        weekViewEvents.add(tmpWVEvent);
+                    }
                 }
-            }
         }
 
         return weekViewEvents;
@@ -168,6 +171,7 @@ public class CalendarMaker {
     }
 
     private static int generateRandomColor(){
+        // Il faut faire getRessource.getColor(...) mais ne fonctionne pas sans contexte donc à exterioriser
         switch (rand.nextInt(4)) {
             case 0:
                 return R.color.event_color_01;

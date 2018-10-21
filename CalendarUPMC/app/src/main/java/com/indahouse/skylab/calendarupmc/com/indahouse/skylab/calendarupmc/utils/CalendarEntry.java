@@ -2,13 +2,7 @@ package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.util
 
 import android.util.Log;
 
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-
-import biweekly.util.Frequency;
 
 public class CalendarEntry {
 
@@ -51,6 +45,18 @@ public class CalendarEntry {
 
     public String getMatiere() {
         return matiere;
+    }
+
+    public String getCode(){
+        return code;
+    }
+
+    public int getColor(){
+        return color;
+    }
+
+    public String getType() {
+        return type;
     }
 }
 
