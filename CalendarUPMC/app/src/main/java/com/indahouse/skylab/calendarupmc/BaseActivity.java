@@ -109,7 +109,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 bool[0]=true;
 
                 if(list_data.getVisibility() == view.INVISIBLE){
-                    new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this).execute(bool[0]);
+                    new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this).execute("");
                     list_data.setVisibility(View.VISIBLE);
                 }else{
                     list_data.setVisibility(View.INVISIBLE);
@@ -321,7 +321,7 @@ public void processFinish(ArrayList<WeekViewEvent> eventz){
     ListView list_data = (ListView) findViewById(R.id.list_data);
     ArrayList<String> data = new ArrayList<String>();
     for (WeekViewEvent event : events) {
-        data.add(event.toString());
+        data.add(event.getName());
     }
 
     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
