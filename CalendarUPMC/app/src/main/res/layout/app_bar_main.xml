@@ -51,6 +51,7 @@
             app:todayBackgroundColor="#d2dff9"
             app:todayHeaderTextColor="@color/colorPrimaryDark" />
 
+        <include layout="@layout/form_checkbox_item"></include>
 
         <ListView
             android:id="@+id/list_data"

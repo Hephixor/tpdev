@@ -1,14 +1,13 @@
 package com.indahouse.skylab.calendarupmc;
 
-import android.app.Dialog;
 import android.app.Activity;
-import android.content.Intent;
+import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -19,13 +18,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,10 +40,10 @@ import com.alamkanak.weekview.WeekViewLoader;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncResponse;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
 
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,7 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     private WeekView mWeekView;
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     private String url;
-
+    private CheckboxAdapter checkboxAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +70,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         this.url = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        //Calendar initialization
         mWeekView = (WeekView) findViewById(R.id.weekView);
         mWeekView.setOnEventClickListener(this);
         mWeekView.setMonthChangeListener(this);
@@ -81,27 +80,45 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         setupDateTimeInterpreter(false);
 
-        ListView list_ue = (ListView) findViewById(R.id.list_ue);
+        //Settings list
+        final ListView list_ue = (ListView) findViewById(R.id.list_ue);
         ArrayList<String> ues = new ArrayList<String>();
+        String[] values = new String[] { "M1 STL", "M2 STL", "M1 DAC",
+                "M2 DAC", "M1 ANDROIDE", "M2 ANDROIDE", "M1 BIM", "M2 BIM",
+                "M1 IMA", "M2 IMA", "M1 RES", "M2 RES", "M1 SAR", "M2 SAR",
+                "M1 SESI", "M2 SESI", "M1 SFPN", "M2 SFPN", "M1", "M2"};
 
-        ues.add("M1 STL");ues.add("M2 STL");ues.add("M1 DAC");ues.add("M2 DAC");
-        ues.add("M1 ANDROIDE");ues.add("M2 ANDROIDE");ues.add("M1 BIM");ues.add("M2 BIM");
-        ues.add("M1 IMA");ues.add("M2 IMA");ues.add("M1 RES");ues.add("M2 RES");
-        ues.add("M1 SAR");ues.add("M2 SAR");ues.add("M1 SESI");ues.add("M2 SESI");
-        ues.add("M1 SFPN");ues.add("M2 SFPN");
+        for (int i = 0; i < values.length; ++i) {
+            ues.add(values[i]);
+        }
+        checkboxAdapter = new CheckboxAdapter(this,ues);
+        list_ue.setAdapter(checkboxAdapter);
+
+        //CheckBox cb = (CheckBox) checkboxAdapter.getView(0, null, list_ue).findViewById(R.id.checkBox1);
+
+        list_ue.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedUE = (String) parent.getItemAtPosition(position);
+                Toast.makeText(getApplicationContext(),selectedUE, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         Button buttonSaveSettings  = findViewById(R.id.buttonSaveSettings);
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(view.getContext(), "You clicked Save", Toast.LENGTH_SHORT).show();
-
+                int i =0;
+                List<Boolean> bools = checkboxAdapter.getBools();
+                for (Boolean b: bools) {
+                    i++;
+                    Log.e("CHECKBOX "+ String.valueOf(i)," "+b);
+                }
             }
         });
 
-     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_multichoice, ues);
-     list_ue.setAdapter(adapter);
-
+        // Refresh action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +141,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             }
         });
 
-
+        //General layout initialization
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -164,53 +183,53 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         }
         switch (id){
             case R.id.action_today:
-            mWeekView.goToToday();
-            mWeekView.goToHour(8);
-            return true;
+                mWeekView.goToToday();
+                mWeekView.goToHour(8);
+                return true;
 
             case R.id.action_day_view:
 
-            if (mWeekViewType != TYPE_DAY_VIEW) {
-                item.setChecked(!item.isChecked());
-                mWeekViewType = TYPE_DAY_VIEW;
-                mWeekView.setNumberOfVisibleDays(1);
+                if (mWeekViewType != TYPE_DAY_VIEW) {
+                    item.setChecked(!item.isChecked());
+                    mWeekViewType = TYPE_DAY_VIEW;
+                    mWeekView.setNumberOfVisibleDays(1);
 
                     // Lets change some dimensions to best fit the view.
-                mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                mWeekView.goToHour(8);
-            }
+                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
+                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                    mWeekView.goToHour(8);
+                }
 
-            return true;
+                return true;
             case R.id.action_three_day_view:
-            if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
-                item.setChecked(!item.isChecked());
-                mWeekViewType = TYPE_THREE_DAY_VIEW;
-                mWeekView.setNumberOfVisibleDays(3);
-
-                // Lets change some dimensions to best fit the view.
-                mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                mWeekView.goToHour(8);
-            }
-            mWeekView.goToHour(8);
-            return true;
-            case R.id.action_week_view:
-            if (mWeekViewType != TYPE_WEEK_VIEW) {
-                item.setChecked(!item.isChecked());
-                mWeekViewType = TYPE_WEEK_VIEW;
-                mWeekView.setNumberOfVisibleDays(7);
+                if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
+                    item.setChecked(!item.isChecked());
+                    mWeekViewType = TYPE_THREE_DAY_VIEW;
+                    mWeekView.setNumberOfVisibleDays(3);
 
                     // Lets change some dimensions to best fit the view.
-                mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
-                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
-                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
+                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                    mWeekView.goToHour(8);
+                }
                 mWeekView.goToHour(8);
-            }
-            mWeekView.goToHour(8);
-            return true;
+                return true;
+            case R.id.action_week_view:
+                if (mWeekViewType != TYPE_WEEK_VIEW) {
+                    item.setChecked(!item.isChecked());
+                    mWeekViewType = TYPE_WEEK_VIEW;
+                    mWeekView.setNumberOfVisibleDays(7);
+
+                    // Lets change some dimensions to best fit the view.
+                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
+                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+                    mWeekView.goToHour(8);
+                }
+                mWeekView.goToHour(8);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -239,162 +258,198 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 }
             }
         });
-}
-
-
-@Override
-public void onBackPressed() {
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    if (drawer.isDrawerOpen(GravityCompat.START)) {
-        drawer.closeDrawer(GravityCompat.START);
-    } else {
-        super.onBackPressed();
     }
-}
 
-@SuppressWarnings("StatementWithEmptyBody")
-public boolean onNavigationItemSelected(MenuItem item) {
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-    int id = item.getItemId();
-    Fragment fragment = null;
-    Class fragmentClass = null;
+        int id = item.getItemId();
+        Fragment fragment = null;
+        Class fragmentClass = null;
 
-    if (id == R.id.nav_camera) {
+        if (id == R.id.nav_camera) {
 
-    } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_gallery) {
 
-    } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_slideshow) {
 
-    } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_manage) {
 
-    } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_share) {
 
-    } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_send) {
 
-    }
-
-    try {
-        if(fragmentClass!=null) {
-            fragment = (Fragment) fragmentClass.newInstance();
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        try {
+            if(fragmentClass!=null) {
+                fragment = (Fragment) fragmentClass.newInstance();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    drawer.closeDrawer(GravityCompat.START);
-    return true;
-}
-
-protected String getEventTitle(Calendar time) {
-    return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
-}
-
-@Override
-public void onEventClick(WeekViewEvent event, RectF eventRect) {
-    String sHour = String.valueOf(event.getStartTime().get(Calendar.HOUR_OF_DAY));
-    String sMinute = String.valueOf(event.getStartTime().get(Calendar.MINUTE));
-    if(event.getStartTime().get(Calendar.MINUTE)<10 && !(String.valueOf(event.getStartTime().get(Calendar.MINUTE)).equals("00"))){
-        sMinute+="0";
+    protected String getEventTitle(Calendar time) {
+        return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
     }
 
-    String eHour = String.valueOf(event.getEndTime().get(Calendar.HOUR_OF_DAY));
-    String eMinute = String.valueOf(event.getEndTime().get(Calendar.MINUTE));
-    if(event.getEndTime().get(Calendar.MINUTE)<10 && !(String.valueOf(event.getEndTime().get(Calendar.MINUTE)).equals("00"))){
-        sMinute+="0";
+    @Override
+    public void onEventClick(WeekViewEvent event, RectF eventRect) {
+        String sHour = String.valueOf(event.getStartTime().get(Calendar.HOUR_OF_DAY));
+        String sMinute = String.valueOf(event.getStartTime().get(Calendar.MINUTE));
+        if(event.getStartTime().get(Calendar.MINUTE)<10 && !(String.valueOf(event.getStartTime().get(Calendar.MINUTE)).equals("00"))){
+            sMinute+="0";
+        }
+
+        String eHour = String.valueOf(event.getEndTime().get(Calendar.HOUR_OF_DAY));
+        String eMinute = String.valueOf(event.getEndTime().get(Calendar.MINUTE));
+        if(event.getEndTime().get(Calendar.MINUTE)<10 && !(String.valueOf(event.getEndTime().get(Calendar.MINUTE)).equals("00"))){
+            sMinute+="0";
+        }
+
+        String location = event.getLocation();
+        String name = event.getName();
+
+        createDialog(name, sHour + ":" + sMinute + " - " + eHour + ":" + eMinute + " \n " + location).show();
+
     }
 
-    String location = event.getLocation();
-    String name = event.getName();
+    public Dialog createDialog(String title, String text){
+        return new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(text)
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
+    }
 
-    createDialog(name, sHour + ":" + sMinute + " - " + eHour + ":" + eMinute + " \n " + location).show();
+    @Override
+    public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
+        // Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
+    }
 
-}
+    @Override
+    public void onEmptyViewLongPress(Calendar time) {
+        //  Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
+    }
 
-public Dialog createDialog(String title, String text){
-    return new AlertDialog.Builder(this)
-    .setTitle(title)
-    .setMessage(text)
-    .setPositiveButton(android.R.string.ok, null)
-    .create();
-}
+    public WeekView getWeekView() {
+        return mWeekView;
+    }
 
-@Override
-public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-   // Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
-}
-
-@Override
-public void onEmptyViewLongPress(Calendar time) {
-  //  Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
-}
-
-public WeekView getWeekView() {
-    return mWeekView;
-}
-
-@Override
-public void processFinish(ArrayList<WeekViewEvent> eventz){
-    this.events.clear();
+    @Override
+    public void processFinish(ArrayList<WeekViewEvent> eventz){
+        this.events.clear();
         //Yes l'effet de bohr tavu
 
-    for (WeekViewEvent event: eventz) {
+        for (WeekViewEvent event: eventz) {
 
-        switch(event.getName().toUpperCase().substring(0,3)){
-            case "TAS":
-               // Log.e("XXX"," Je suis TAS");
-                event.setColor(getResources().getColor(R.color.event_color_01));
-                break;
-            case "DAR":
-                event.setColor(getResources().getColor(R.color.event_color_02));
-                break;
-            case "SVP":
-                event.setColor(getResources().getColor(R.color.event_color_03));
-                break;
-            case "PPC":
-                event.setColor(getResources().getColor(R.color.event_color_04));
-                break;
-                default:
-                   // Log.e("XXX"," Je suis " +  event.getName().toUpperCase().substring(0,3));
+            switch(event.getName().toUpperCase().substring(0,3)){
+                case "TAS":
+                    // Log.e("XXX"," Je suis TAS");
+                    event.setColor(getResources().getColor(R.color.event_color_01));
                     break;
+                case "DAR":
+                    event.setColor(getResources().getColor(R.color.event_color_02));
+                    break;
+                case "SVP":
+                    event.setColor(getResources().getColor(R.color.event_color_03));
+                    break;
+                case "PPC":
+                    event.setColor(getResources().getColor(R.color.event_color_04));
+                    break;
+                default:
+                    // Log.e("XXX"," Je suis " +  event.getName().toUpperCase().substring(0,3));
+                    break;
+            }
+
         }
 
+        this.events=eventz;
+
+        WeekViewLoader wk = new WeekViewLoader() {
+            int i=0;
+            @Override
+            public double toWeekViewPeriodIndex(Calendar instance) {
+                return 0;
+            }
+
+            @Override
+            public List<? extends WeekViewEvent> onLoad(int periodIndex) {
+                i++;
+                if(i==3) {
+                    i=0;
+                    return events;
+                }
+                else{
+                    return new ArrayList<WeekViewEvent>();
+                }
+            }
+
+        };
+
+        mWeekView.setWeekViewLoader(wk);
+        mWeekView.notifyDatasetChanged();
+        ProgressBar progressBar = findViewById(R.id.progress);
+        progressBar.setVisibility(View.GONE);
+        Blurry.delete((ViewGroup) findViewById(R.id.content));
     }
 
-    this.events=eventz;
+    private class CheckboxAdapter extends ArrayAdapter {
+        Context context;
+        List<Boolean> checkboxState;
+        List<String> checkboxItems;
 
-    WeekViewLoader wk = new WeekViewLoader() {
-        int i=0;
-        @Override
-        public double toWeekViewPeriodIndex(Calendar instance) {
-            return 0;
+        public CheckboxAdapter(Context context, List<String> resource) {
+            super(context, R.layout.form_checkbox_item, resource);
+            this.context = context;
+            this.checkboxItems = resource;
+            this.checkboxState = new ArrayList<Boolean>(Collections.nCopies(resource.size(), false));
         }
 
-        @Override
-        public List<? extends WeekViewEvent> onLoad(int periodIndex) {
-            i++;
-            if(i==3) {
-                i=0;
-                return events;
-            }
-            else{
-                return new ArrayList<WeekViewEvent>();
-            }
+        public View getView(int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            convertView = inflater.inflate(R.layout.form_checkbox_item, parent, false);
+            TextView textView = (TextView) convertView.findViewById(R.id.textView1);
+            CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox1);
+            cb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(view.getContext(),"checked ", Toast.LENGTH_SHORT);
+                }
+            });
+            textView.setText(checkboxItems.get(position));
+            cb.setChecked(checkboxState.get(position));
+            return convertView;
         }
 
-    };
+        private void setChecked(boolean state, int position)
+        {
+            checkboxState.set(position, state);
+        }
 
-    mWeekView.setWeekViewLoader(wk);
-    mWeekView.notifyDatasetChanged();
-    ProgressBar progressBar = findViewById(R.id.progress);
-    progressBar.setVisibility(View.GONE);
-    Blurry.delete((ViewGroup) findViewById(R.id.content));
-}
-
-
+        public List<Boolean> getBools(){
+            return checkboxState;
+        }
+    }
 
 
 }
