@@ -97,9 +97,7 @@ public class CalendarMaker {
                 location = vEvent.getLocation().getValue();
             }
 
-            int color = generateRandomColor();
-
-            CalendarEntry tmpCal = new CalendarEntry(matiere,code,type,location,color);
+            CalendarEntry tmpCal = new CalendarEntry(matiere,code,type,location,0);
             CalEntries.add(tmpCal);
 
             /*calcul de la duree du vEvent*/
@@ -148,15 +146,8 @@ public class CalendarMaker {
         WeekViewEvent tmpWVEvent;
         for (CalendarEntry calEntry : calentries) {
                 for (Schedule sched : calEntry.getSchedules()) {
-                    if (sched.getStartTime().get(Calendar.YEAR) == thisYear ||
-                            sched.getStartTime().get(Calendar.YEAR) == thisYear + 1) {
-                        tmpWVEvent = new WeekViewEvent(generateWVEId(),
-                                calEntry.getMatiere() + " " + sched.getStartTimeHM() + " " + sched.getStartTimeDMY() +
-                                        "\n\n" + calEntry.getLocation(), sched.getStartTime(), sched.getEndTime());
-
-                        int randColor = generateRandomColor();
-                        Log.e("Color", String.valueOf(randColor));
-                        tmpWVEvent.setColor(randColor);
+                    if (sched.getStartTime().get(Calendar.YEAR) == thisYear || sched.getStartTime().get(Calendar.YEAR) == thisYear + 1) {
+                        tmpWVEvent = new WeekViewEvent(generateWVEId(),calEntry.getMatiere()+" - " + calEntry.getType()+"\n\n", "\n" + calEntry.getLocation()+"\n", sched.getStartTime(), sched.getEndTime());
                         weekViewEvents.add(tmpWVEvent);
                     }
                 }
@@ -170,18 +161,4 @@ public class CalendarMaker {
         return WVEidCounter;
     }
 
-    private static int generateRandomColor(){
-        // Il faut faire getRessource.getColor(...) mais ne fonctionne pas sans contexte donc à exterioriser
-        switch (rand.nextInt(4)) {
-            case 0:
-                return R.color.event_color_01;
-            case 1:
-                return R.color.event_color_02;
-            case 2:
-                return R.color.event_color_03;
-            case 3:
-                return R.color.event_color_04;
-        }
-        return -1;
-    }
 }

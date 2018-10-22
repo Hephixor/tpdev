@@ -22,8 +22,11 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import jp.wasabeef.blurry.Blurry;
 
 /**
  * This is a base activity which contains week view and all the codes necessary to initialize the
@@ -82,6 +87,30 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         setupDateTimeInterpreter(false);
 
 
+        ListView list_ue = (ListView) findViewById(R.id.list_ue);
+        ArrayList<String> ues = new ArrayList<String>();
+        ues.add("M1 STL");
+        ues.add("M2 STL");
+        ues.add("M1 DAC");
+        ues.add("M2 DAC");
+        ues.add("M1 ANDROIDE");
+        ues.add("M2 ANDROIDE");
+        ues.add("M1 BIM");
+        ues.add("M2 BIM");
+        ues.add("M1 IMA");
+        ues.add("M2 IMA");
+        ues.add("M1 RES");
+        ues.add("M2 RES");
+        ues.add("M1 SAR");
+        ues.add("M2 SAR");
+        ues.add("M1 SESI");
+        ues.add("M2 SESI");
+        ues.add("M1 SFPN");
+        ues.add("M2 SFPN");
+
+     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, ues);
+        list_ue.setAdapter(adapter);
+
      /*   //Fragments
         Fragment fragment = null;
         Class fragmentClass = fragment_main.class;
@@ -104,14 +133,21 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
             @Override
             public void onClick(View view) {
-                ListView list_data = findViewById(R.id.list_data);
-                list_data.setBackgroundColor(Color.GRAY);
+                ProgressBar progressBar = findViewById(R.id.progress);
 
-                if(list_data.getVisibility() == view.INVISIBLE){
+
+                if(progressBar.getVisibility() == view.GONE){
+                    progressBar.setVisibility(View.VISIBLE);
+                    Blurry.with(BaseActivity.this).radius(1)
+                            .sampling(2)
+                            .async()
+                            .color(android.R.color.darker_gray)
+                            .animate(500)
+                            .onto((ViewGroup) findViewById(R.id.content));
                     new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this, url).execute("");
-                    list_data.setVisibility(View.VISIBLE);
+
                 }else{
-                    list_data.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         });
@@ -135,14 +171,29 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         setupDateTimeInterpreter(id == R.id.action_week_view);
+
         if (id == R.id.action_settings) {
+            ListView list_ue = findViewById(R.id.list_ue);
+            FloatingActionButton fab = findViewById(R.id.fab);
+            list_ue.setBackgroundColor(Color.WHITE);
+
+            if(list_ue.getVisibility() == View.INVISIBLE){
+                list_ue.setVisibility(View.VISIBLE);
+                fab.hide();
+            }else{
+                list_ue.setVisibility(View.INVISIBLE);
+                fab.show();
+            }
             return true;
         }
         switch (id){
             case R.id.action_today:
             mWeekView.goToToday();
+            mWeekView.goToHour(8);
             return true;
+
             case R.id.action_day_view:
+
             if (mWeekViewType != TYPE_DAY_VIEW) {
                 item.setChecked(!item.isChecked());
                 mWeekViewType = TYPE_DAY_VIEW;
@@ -152,7 +203,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
                 mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
                 mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                mWeekView.goToHour(8);
             }
+
             return true;
             case R.id.action_three_day_view:
             if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
@@ -164,7 +217,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
                 mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
                 mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                mWeekView.goToHour(8);
             }
+            mWeekView.goToHour(8);
             return true;
             case R.id.action_week_view:
             if (mWeekViewType != TYPE_WEEK_VIEW) {
@@ -176,7 +231,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
                 mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
                 mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+                mWeekView.goToHour(8);
             }
+            mWeekView.goToHour(8);
             return true;
         }
 
@@ -312,7 +369,7 @@ public void processFinish(ArrayList<WeekViewEvent> eventz){
 
         switch(event.getName().toUpperCase().substring(0,3)){
             case "TAS":
-                Log.e("XXX"," Je suis TAS");
+               // Log.e("XXX"," Je suis TAS");
                 event.setColor(getResources().getColor(R.color.event_color_01));
                 break;
             case "DAR":
@@ -325,23 +382,13 @@ public void processFinish(ArrayList<WeekViewEvent> eventz){
                 event.setColor(getResources().getColor(R.color.event_color_04));
                 break;
                 default:
-                    Log.e("XXX"," Je suis " +  event.getName().toUpperCase().substring(0,3));
+                   // Log.e("XXX"," Je suis " +  event.getName().toUpperCase().substring(0,3));
                     break;
         }
 
     }
 
     this.events=eventz;
-
-    ListView list_data = (ListView) findViewById(R.id.list_data);
-    ArrayList<String> data = new ArrayList<String>();
-    for (WeekViewEvent event : events) {
-        data.add(event.getName());
-    }
-
-    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
-    list_data.setAdapter(adapter);
-
 
     WeekViewLoader wk = new WeekViewLoader() {
         int i=0;
@@ -366,6 +413,9 @@ public void processFinish(ArrayList<WeekViewEvent> eventz){
 
     mWeekView.setWeekViewLoader(wk);
     mWeekView.notifyDatasetChanged();
+    ProgressBar progressBar = findViewById(R.id.progress);
+    progressBar.setVisibility(View.GONE);
+    Blurry.delete((ViewGroup) findViewById(R.id.content));
 }
 
 
