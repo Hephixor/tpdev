@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -50,8 +51,6 @@ import jp.wasabeef.blurry.Blurry;
 /**
  * This is a base activity which contains week view and all the codes necessary to initialize the
  * week view.
- * Created by Raquib-ul-Alam Kanak on 1/3/2014.
- * Website: http://alamkanak.github.io
  */
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener,AsyncResponse {
     private static final int TYPE_DAY_VIEW = 1;
@@ -68,73 +67,46 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
+        this.url = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);
-        // Show a toast message about the touched event.
         mWeekView.setOnEventClickListener(this);
-        // The week view has infinite scrolling horizontally. We have to provide the events of a
-        // month every time the month changes on the week view.
         mWeekView.setMonthChangeListener(this);
-        // Set long press listener for events.
         mWeekView.setEventLongPressListener(this);
-        // Set long press listener for empty view
         mWeekView.setEmptyViewLongPressListener(this);
         mWeekView.goToHour(8);
 
         setupDateTimeInterpreter(false);
 
-
         ListView list_ue = (ListView) findViewById(R.id.list_ue);
         ArrayList<String> ues = new ArrayList<String>();
-        ues.add("M1 STL");
-        ues.add("M2 STL");
-        ues.add("M1 DAC");
-        ues.add("M2 DAC");
-        ues.add("M1 ANDROIDE");
-        ues.add("M2 ANDROIDE");
-        ues.add("M1 BIM");
-        ues.add("M2 BIM");
-        ues.add("M1 IMA");
-        ues.add("M2 IMA");
-        ues.add("M1 RES");
-        ues.add("M2 RES");
-        ues.add("M1 SAR");
-        ues.add("M2 SAR");
-        ues.add("M1 SESI");
-        ues.add("M2 SESI");
-        ues.add("M1 SFPN");
-        ues.add("M2 SFPN");
 
-     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, ues);
-        list_ue.setAdapter(adapter);
+        ues.add("M1 STL");ues.add("M2 STL");ues.add("M1 DAC");ues.add("M2 DAC");
+        ues.add("M1 ANDROIDE");ues.add("M2 ANDROIDE");ues.add("M1 BIM");ues.add("M2 BIM");
+        ues.add("M1 IMA");ues.add("M2 IMA");ues.add("M1 RES");ues.add("M2 RES");
+        ues.add("M1 SAR");ues.add("M2 SAR");ues.add("M1 SESI");ues.add("M2 SESI");
+        ues.add("M1 SFPN");ues.add("M2 SFPN");
 
-     /*   //Fragments
-        Fragment fragment = null;
-        Class fragmentClass = fragment_main.class;
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Button buttonSaveSettings  = findViewById(R.id.buttonSaveSettings);
+        buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(), "You clicked Save", Toast.LENGTH_SHORT).show();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+            }
+        });
 
-        */
-
-        this.url = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
+     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_multichoice, ues);
+     list_ue.setAdapter(adapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
         fab.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 ProgressBar progressBar = findViewById(R.id.progress);
-
 
                 if(progressBar.getVisibility() == view.GONE){
                     progressBar.setVisibility(View.VISIBLE);
@@ -145,8 +117,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                             .animate(500)
                             .onto((ViewGroup) findViewById(R.id.content));
                     new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this, url).execute("");
-
-                }else{
+                }
+                else{
                     progressBar.setVisibility(View.GONE);
                 }
             }
@@ -175,14 +147,18 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         if (id == R.id.action_settings) {
             ListView list_ue = findViewById(R.id.list_ue);
             FloatingActionButton fab = findViewById(R.id.fab);
+            Button buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
+
             list_ue.setBackgroundColor(Color.WHITE);
 
             if(list_ue.getVisibility() == View.INVISIBLE){
                 list_ue.setVisibility(View.VISIBLE);
                 fab.hide();
+                buttonSaveSettings.setVisibility(View.VISIBLE);
             }else{
                 list_ue.setVisibility(View.INVISIBLE);
                 fab.show();
+                buttonSaveSettings.setVisibility(View.INVISIBLE);
             }
             return true;
         }
@@ -213,7 +189,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 mWeekViewType = TYPE_THREE_DAY_VIEW;
                 mWeekView.setNumberOfVisibleDays(3);
 
-                    // Lets change some dimensions to best fit the view.
+                // Lets change some dimensions to best fit the view.
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
                 mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
                 mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
