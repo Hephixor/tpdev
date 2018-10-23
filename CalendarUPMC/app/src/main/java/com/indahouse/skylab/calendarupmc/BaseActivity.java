@@ -3,6 +3,7 @@ package com.indahouse.skylab.calendarupmc;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -93,6 +94,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         }
         checkboxAdapter = new CheckboxAdapter(this,ues);
         list_ue.setAdapter(checkboxAdapter);
+        checkboxAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                Toast.makeText(getBaseContext(), String.valueOf("data changed"), Toast.LENGTH_LONG);
+            }
+        });
 
         //CheckBox cb = (CheckBox) checkboxAdapter.getView(0, null, list_ue).findViewById(R.id.checkBox1);
 
@@ -108,7 +115,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), "You clicked Save", Toast.LENGTH_SHORT).show();
                 int i =0;
                 List<Boolean> bools = checkboxAdapter.getBools();
                 for (Boolean b: bools) {
@@ -425,15 +431,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             this.checkboxState = new ArrayList<Boolean>(Collections.nCopies(resource.size(), false));
         }
 
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             convertView = inflater.inflate(R.layout.form_checkbox_item, parent, false);
             TextView textView = (TextView) convertView.findViewById(R.id.textView1);
-            CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox1);
+            final CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox1);
             cb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(view.getContext(),"checked ", Toast.LENGTH_SHORT);
+                    setChecked(position, !checkboxState.get(position));
                 }
             });
             textView.setText(checkboxItems.get(position));
@@ -441,9 +447,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             return convertView;
         }
 
-        private void setChecked(boolean state, int position)
+        private void setChecked( int position, boolean state)
         {
             checkboxState.set(position, state);
+            notifyDataSetChanged();
         }
 
         public List<Boolean> getBools(){
