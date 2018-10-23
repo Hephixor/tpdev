@@ -40,6 +40,7 @@ import com.alamkanak.weekview.WeekViewEvent;
 import com.alamkanak.weekview.WeekViewLoader;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncResponse;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
+import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.CheckboxAdapter;
 
 import org.w3c.dom.Text;
 
@@ -103,7 +104,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             }
         });
 
-        //CheckBox cb = (CheckBox) checkboxAdapter.getView(0, null, list_ue).findViewById(R.id.checkBox1);
 
         list_ue.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -113,17 +113,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             }
         });
 
-        Button buttonSaveSettings  = findViewById(R.id.buttonSaveSettings);
+        FloatingActionButton buttonSaveSettings  = findViewById(R.id.buttonSaveSettings);
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int i =0;
-                List<Boolean> bools = checkboxAdapter.getBools();
-                for (Boolean b: bools) {
-                    i++;
-                    Log.e("CHECKBOX "+ String.valueOf(i)," "+b);
-                }
-            }
+                    checkboxAdapter.printSharedPref();
+                            }
         });
 
         // Refresh action button
@@ -156,8 +151,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+           NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+           navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -175,7 +170,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             ListView list_ue = findViewById(R.id.list_ue);
             list_ue.setAdapter(checkboxAdapter);
             FloatingActionButton fab = findViewById(R.id.fab);
-            Button buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
+            FloatingActionButton buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
             TextView textView = findViewById(R.id.textView1);
             CheckBox checkBox = findViewById(R.id.checkBox1);
             WeekView weekView = findViewById(R.id.weekView);
@@ -186,7 +181,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 list_ue.setVisibility(View.VISIBLE);
                 textView.setVisibility(View.VISIBLE);
                 checkBox.setVisibility(View.VISIBLE);
-                buttonSaveSettings.setVisibility(View.VISIBLE);
+                buttonSaveSettings.show();
 
                 weekView.setVisibility(View.GONE);
                 fab.hide();
@@ -195,8 +190,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 list_ue.setVisibility(View.GONE);
                 textView.setVisibility(View.GONE);
                 checkBox.setVisibility(View.GONE);
-                buttonSaveSettings.setVisibility(View.GONE);
-
+                buttonSaveSettings.hide();
                 weekView.setVisibility(View.VISIBLE);
                 fab.show();
             }
@@ -300,17 +294,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         Class fragmentClass = null;
 
         if (id == R.id.nav_camera) {
-
+            Toast.makeText(this,"Camera",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_gallery) {
-
+            Toast.makeText(this,"Gallery",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_slideshow) {
-
+            Toast.makeText(this,"Slideshow",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_manage) {
-
+            Toast.makeText(this,"Manage",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_share) {
-
+            Toast.makeText(this,"Share",Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_send) {
-
+            Toast.makeText(this,"Send",Toast.LENGTH_SHORT).show();
         }
 
         try {
@@ -337,21 +331,20 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
         String sHour = String.valueOf(event.getStartTime().get(Calendar.HOUR_OF_DAY));
         String sMinute = String.valueOf(event.getStartTime().get(Calendar.MINUTE));
-        if(event.getStartTime().get(Calendar.MINUTE)<10 && !(String.valueOf(event.getStartTime().get(Calendar.MINUTE)).equals("00"))){
-            sMinute+="0";
-        }
-
         String eHour = String.valueOf(event.getEndTime().get(Calendar.HOUR_OF_DAY));
         String eMinute = String.valueOf(event.getEndTime().get(Calendar.MINUTE));
-        if(event.getEndTime().get(Calendar.MINUTE)<10 && !(String.valueOf(event.getEndTime().get(Calendar.MINUTE)).equals("00"))){
-            sMinute+="0";
-        }
-
         String location = event.getLocation();
         String name = event.getName();
 
-        createDialog(name, sHour + ":" + sMinute + " - " + eHour + ":" + eMinute + " \n " + location).show();
+        if(sMinute.equals("0")){
+            sMinute="00";
+        }
 
+        if(eMinute.equals("0")){
+            eMinute="00";
+        }
+
+        createDialog(name, sHour + ":" + sMinute + " - " + eHour + ":" + eMinute + " \n " + location).show();
     }
 
     public Dialog createDialog(String title, String text){
@@ -439,46 +432,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         Blurry.delete((ViewGroup) findViewById(R.id.content));
     }
 
-    private class CheckboxAdapter extends ArrayAdapter {
-        Context context;
-        List<Boolean> checkboxState;
-        List<String> checkboxItems;
 
-        public CheckboxAdapter(Context context, List<String> resource) {
-            super(context, R.layout.form_checkbox_item, resource);
-            this.context = context;
-            this.checkboxItems = resource;
-            this.checkboxState = new ArrayList<Boolean>(Collections.nCopies(resource.size(), false));
-        }
-
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            if(convertView==null) {
-                LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-                convertView = inflater.inflate(R.layout.form_checkbox_item, parent, false);
-            }
-            TextView textView = (TextView) convertView.findViewById(R.id.textView1);
-            final CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox1);
-            cb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    setChecked(position, !checkboxState.get(position));
-                }
-            });
-            textView.setText(checkboxItems.get(position));
-            cb.setChecked(checkboxState.get(position));
-            return convertView;
-        }
-
-        private void setChecked( int position, boolean state)
-        {
-            checkboxState.set(position, state);
-            notifyDataSetChanged();
-        }
-
-        public List<Boolean> getBools(){
-            return checkboxState;
-        }
-    }
 
 
 }

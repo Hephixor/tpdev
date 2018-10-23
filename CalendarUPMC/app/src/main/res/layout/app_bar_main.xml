@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context=".MainActivity">
 
     <RelativeLayout
@@ -33,7 +32,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
             app:columnGap="8dp"
-            app:dayBackgroundColor="#05000000"
+            app:dayBackgroundColor="#3498db"
             app:eventTextColor="@android:color/white"
             app:futureWeekendBackgroundColor="#E0ECE0"
             app:headerColumnBackground="#ffffffff"
@@ -48,7 +47,7 @@
             app:showDistinctWeekendColor="true"
             app:showNowLine="true"
             app:textSize="12sp"
-            app:todayBackgroundColor="#d2dff9"
+            app:todayBackgroundColor="#3498db"
             app:todayHeaderTextColor="@color/colorPrimaryDark" />
 
         <include layout="@layout/form_checkbox_item"></include>
@@ -61,14 +60,21 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:visibility="gone" />
 
-        <Button
+
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/buttonSaveSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/list_ue"
-            android:layout_centerHorizontal="true"
-            android:visibility="invisible"
-            android:text="Save" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:visibility="visible"
+            app:borderWidth="0dp"
+            android:backgroundTint="@color/colorPrimary"
+            app:srcCompat="@android:drawable/ic_menu_save" />
+
 
         <FrameLayout
             android:id="@+id/flContent"
@@ -87,9 +93,10 @@
             android:layout_marginBottom="20dp"
             android:visibility="visible"
             app:srcCompat="@android:drawable/stat_notify_sync" />
-
     </RelativeLayout>
 
+
+    <!-- excluded from blur -->
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
