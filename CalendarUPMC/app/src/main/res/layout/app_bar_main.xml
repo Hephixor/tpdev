@@ -53,28 +53,19 @@
 
         <include layout="@layout/form_checkbox_item"></include>
 
-        <ListView
-            android:id="@+id/list_data"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:gravity="bottom"
-            android:text=""
-            android:visibility="invisible" />
 
         <ListView
             android:id="@+id/list_ue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginTop="?attr/actionBarSize"
-            android:gravity="bottom"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/buttonSaveSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/weekView"
+            android:layout_alignBottom="@id/list_ue"
             android:layout_centerHorizontal="true"
             android:visibility="invisible"
             android:text="Save" />

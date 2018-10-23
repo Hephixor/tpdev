@@ -12,6 +12,7 @@
         android:layout_marginLeft="40dp"
         android:textColor="@color/accent"
         android:padding="12dp"
+        android:visibility="visible"
         />
 
     <TextView
@@ -21,6 +22,8 @@
         android:layout_marginLeft="10dp"
         android:text="TextView"
         android:textColor="@color/accent"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:visibility="visible"
+        />
 
 </LinearLayout>

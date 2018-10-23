@@ -41,6 +41,8 @@ import com.alamkanak.weekview.WeekViewLoader;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncResponse;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -93,7 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             ues.add(values[i]);
         }
         checkboxAdapter = new CheckboxAdapter(this,ues);
-        list_ue.setAdapter(checkboxAdapter);
+
         checkboxAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -171,19 +173,32 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         if (id == R.id.action_settings) {
             ListView list_ue = findViewById(R.id.list_ue);
+            list_ue.setAdapter(checkboxAdapter);
             FloatingActionButton fab = findViewById(R.id.fab);
             Button buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
+            TextView textView = findViewById(R.id.textView1);
+            CheckBox checkBox = findViewById(R.id.checkBox1);
+            WeekView weekView = findViewById(R.id.weekView);
 
             list_ue.setBackgroundColor(Color.WHITE);
 
-            if(list_ue.getVisibility() == View.INVISIBLE){
+            if(list_ue.getVisibility() == View.GONE){
                 list_ue.setVisibility(View.VISIBLE);
-                fab.hide();
+                textView.setVisibility(View.VISIBLE);
+                checkBox.setVisibility(View.VISIBLE);
                 buttonSaveSettings.setVisibility(View.VISIBLE);
-            }else{
-                list_ue.setVisibility(View.INVISIBLE);
+
+                weekView.setVisibility(View.GONE);
+                fab.hide();
+            }
+            else{
+                list_ue.setVisibility(View.GONE);
+                textView.setVisibility(View.GONE);
+                checkBox.setVisibility(View.GONE);
+                buttonSaveSettings.setVisibility(View.GONE);
+
+                weekView.setVisibility(View.VISIBLE);
                 fab.show();
-                buttonSaveSettings.setVisibility(View.INVISIBLE);
             }
             return true;
         }
@@ -367,7 +382,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         //Yes l'effet de bohr tavu
 
         for (WeekViewEvent event: eventz) {
-
             switch(event.getName().toUpperCase().substring(0,3)){
                 case "TAS":
                     // Log.e("XXX"," Je suis TAS");
@@ -391,6 +405,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         this.events=eventz;
 
+        updateDisplay();
+
+
+    }
+
+    public void updateDisplay(){
         WeekViewLoader wk = new WeekViewLoader() {
             int i=0;
             @Override
@@ -432,8 +452,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         }
 
         public View getView(final int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            convertView = inflater.inflate(R.layout.form_checkbox_item, parent, false);
+            if(convertView==null) {
+                LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+                convertView = inflater.inflate(R.layout.form_checkbox_item, parent, false);
+            }
             TextView textView = (TextView) convertView.findViewById(R.id.textView1);
             final CheckBox cb = (CheckBox) convertView.findViewById(R.id.checkBox1);
             cb.setOnClickListener(new View.OnClickListener() {
