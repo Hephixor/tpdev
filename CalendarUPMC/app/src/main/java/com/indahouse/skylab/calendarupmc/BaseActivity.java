@@ -7,6 +7,7 @@ import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -47,8 +48,11 @@ import org.w3c.dom.Text;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import jp.wasabeef.blurry.Blurry;
@@ -87,7 +91,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         //Settings list
         final ListView list_ue = (ListView) findViewById(R.id.list_ue);
-        ArrayList<String> ues = new ArrayList<String>();
+        final ArrayList<String> ues = new ArrayList<String>();
         String[] values = new String[] { "STL/M1_STL", "STL/M2_STL", "DAC/M1_DAC",
                 "DAC/M2_DAC", "ANDROIDE/M1_ANDROIDE", "ANDROIDE/M2_ANDROIDE", "BIM/M1_BIM", "BIM/M2_BIM",
                 "IMA/M1_IMA", "IMA/M2_IMA", "RES/M1_RES", "RES/M2_RES", "SAR/M1_SAR", "SAR/M2_SAR",
@@ -106,21 +110,35 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         });
 
 
-        list_ue.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedUE = (String) parent.getItemAtPosition(position);
-
-
-            }
-        });
-
         FloatingActionButton buttonSaveSettings  = findViewById(R.id.buttonSaveSettings);
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    checkboxAdapter.printSharedPref();
-                            }
+                ListView list_ue = findViewById(R.id.list_ue);
+                list_ue.setAdapter(checkboxAdapter);
+                FloatingActionButton fab = findViewById(R.id.fab);
+                FloatingActionButton buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
+                TextView textView = findViewById(R.id.textView1);
+                CheckBox checkBox = findViewById(R.id.checkBox1);
+                WeekView weekView = findViewById(R.id.weekView);
+
+                if(list_ue.getVisibility() == View.GONE){
+                    list_ue.setVisibility(View.VISIBLE);
+                    textView.setVisibility(View.VISIBLE);
+                    checkBox.setVisibility(View.VISIBLE);
+                    buttonSaveSettings.show();
+                    weekView.setVisibility(View.GONE);
+                    fab.hide();
+                }
+                else{
+                    list_ue.setVisibility(View.GONE);
+                    textView.setVisibility(View.GONE);
+                    checkBox.setVisibility(View.GONE);
+                    buttonSaveSettings.hide();
+                    weekView.setVisibility(View.VISIBLE);
+                    fab.show();
+                }
+             }
         });
 
         // Refresh action button
@@ -128,8 +146,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                events.clear();
                 ProgressBar progressBar = findViewById(R.id.progress);
-
                 if(progressBar.getVisibility() == view.GONE){
                     progressBar.setVisibility(View.VISIBLE);
                     Blurry.with(BaseActivity.this).radius(1)
@@ -138,10 +156,32 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                             .color(android.R.color.darker_gray)
                             .animate(500)
                             .onto((ViewGroup) findViewById(R.id.content));
-                    new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this, url).execute("");
+
+                    ArrayList<String> urlsToDownload = new ArrayList<String>();
+                    ArrayList<Boolean> urlsCheck = new ArrayList<>(checkboxAdapter.getBools());
+
+                    //wtf les index sur les lists
+
+                    int i = 0;
+                    for (Boolean b : urlsCheck) {
+                        if(b.equals(true)){
+                            urlsToDownload.add(ues.get(i));
+                        }
+                        i++;
+                    }
+
+
+                    for (String strUrl: urlsToDownload) {
+                        String completeUrl = baseUE + strUrl;
+                        Log.e("XXX ", completeUrl);
+                        new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this, completeUrl).execute("");
+                    }
+
+                    updateDisplay();
+
                 }
                 else{
-                    progressBar.setVisibility(View.GONE);
+
                 }
             }
         });
@@ -252,7 +292,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         return super.onOptionsItemSelected(item);
     }
 
-
     private void setupDateTimeInterpreter(final boolean shortDate) {
         mWeekView.setDateTimeInterpreter(new DateTimeInterpreter() {
             @Override
@@ -276,7 +315,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             }
         });
     }
-
 
     @Override
     public void onBackPressed() {
@@ -373,7 +411,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
     @Override
     public void processFinish(ArrayList<WeekViewEvent> eventz){
-        this.events.clear();
+
         //Yes l'effet de bohr tavu
 
         for (WeekViewEvent event: eventz) {
@@ -398,11 +436,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
 
         }
 
-        this.events=eventz;
+        for (WeekViewEvent wve : eventz) {
+            this.events.add(wve);
+        }
 
-        updateDisplay();
-
-
+         updateDisplay();
     }
 
     public void updateDisplay(){
@@ -433,8 +471,5 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         progressBar.setVisibility(View.GONE);
         Blurry.delete((ViewGroup) findViewById(R.id.content));
     }
-
-
-
 
 }

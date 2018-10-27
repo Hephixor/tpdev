@@ -29,8 +29,18 @@ public class CheckboxAdapter extends ArrayAdapter {
         super(context, R.layout.form_checkbox_item, resource);
         this.context = context;
         this.checkboxItems = resource;
-        this.checkboxState = new ArrayList<Boolean>(Collections.nCopies(resource.size(), false));
         sharedPreferences = context.getApplicationContext().getSharedPreferences(context.getResources().getString(R.string.shared_pref),Context.MODE_PRIVATE);
+        this.checkboxState = stateFromPrefs(resource);
+
+        }
+
+        private ArrayList<Boolean> stateFromPrefs(List<String> resource){
+        ArrayList<Boolean> tmpState = new ArrayList<Boolean>(Collections.nCopies(resource.size(), false));
+        HashMap<String,?> map = (HashMap)sharedPreferences.getAll();
+            for (String str : map.keySet()) {
+                if(map.get(str).equals("true")){tmpState.set(Integer.valueOf(str),true); }
+            }
+        return tmpState;
         }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -74,4 +84,6 @@ public class CheckboxAdapter extends ArrayAdapter {
     public List<Boolean> getBools(){
         return checkboxState;
     }
+
+    public List<String> getCheckboxItems() { return checkboxItems; }
 }
