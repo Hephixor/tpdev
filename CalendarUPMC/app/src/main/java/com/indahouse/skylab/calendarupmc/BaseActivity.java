@@ -66,6 +66,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     private String url;
     private CheckboxAdapter checkboxAdapter;
+    private String baseUE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         setContentView(R.layout.activity_base);
 
         this.url = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
-
+        this.baseUE =  new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/");
         //Calendar initialization
         mWeekView = (WeekView) findViewById(R.id.weekView);
         mWeekView.setOnEventClickListener(this);
@@ -87,10 +88,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         //Settings list
         final ListView list_ue = (ListView) findViewById(R.id.list_ue);
         ArrayList<String> ues = new ArrayList<String>();
-        String[] values = new String[] { "M1 STL", "M2 STL", "M1 DAC",
-                "M2 DAC", "M1 ANDROIDE", "M2 ANDROIDE", "M1 BIM", "M2 BIM",
-                "M1 IMA", "M2 IMA", "M1 RES", "M2 RES", "M1 SAR", "M2 SAR",
-                "M1 SESI", "M2 SESI", "M1 SFPN", "M2 SFPN", "M1", "M2"};
+        String[] values = new String[] { "STL/M1_STL", "STL/M2_STL", "DAC/M1_DAC",
+                "DAC/M2_DAC", "ANDROIDE/M1_ANDROIDE", "ANDROIDE/M2_ANDROIDE", "BIM/M1_BIM", "BIM/M2_BIM",
+                "IMA/M1_IMA", "IMA/M2_IMA", "RES/M1_RES", "RES/M2_RES", "SAR/M1_SAR", "SAR/M2_SAR",
+                "SESI/M1_SESI", "SESI/M2_SESI", "SFPN/M1_SFPN", "SFPN/M2_SFPN", "M1", "M2"};
 
         for (int i = 0; i < values.length; ++i) {
             ues.add(values[i]);
@@ -109,7 +110,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedUE = (String) parent.getItemAtPosition(position);
-                Toast.makeText(getApplicationContext(),selectedUE, Toast.LENGTH_SHORT).show();
+
+
             }
         });
 
