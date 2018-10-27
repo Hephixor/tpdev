@@ -1,13 +1,9 @@
 package com.indahouse.skylab.calendarupmc;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -18,16 +14,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -43,42 +34,31 @@ import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.AsyncTaskGetEventsEntries;
 import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.CheckboxAdapter;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
 
 import jp.wasabeef.blurry.Blurry;
 
-/**
- * This is a base activity which contains week view and all the codes necessary to initialize the
- * week view.
- */
 public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener,AsyncResponse {
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
     private WeekView mWeekView;
+    private final String baseUE = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/");
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
-    private String url;
+    private ArrayList<String> ues = new ArrayList<String>();
     private CheckboxAdapter checkboxAdapter;
-    private String baseUE;
+    private int tasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
-        this.url = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/STL/M2_STL");
-        this.baseUE =  new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/");
         //Calendar initialization
         mWeekView = (WeekView) findViewById(R.id.weekView);
         mWeekView.setOnEventClickListener(this);
@@ -86,12 +66,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         mWeekView.setEventLongPressListener(this);
         mWeekView.setEmptyViewLongPressListener(this);
         mWeekView.goToHour(8);
-
         setupDateTimeInterpreter(false);
 
         //Settings list
         final ListView list_ue = (ListView) findViewById(R.id.list_ue);
-        final ArrayList<String> ues = new ArrayList<String>();
+
         String[] values = new String[] { "STL/M1_STL", "STL/M2_STL", "DAC/M1_DAC",
                 "DAC/M2_DAC", "ANDROIDE/M1_ANDROIDE", "ANDROIDE/M2_ANDROIDE", "BIM/M1_BIM", "BIM/M2_BIM",
                 "IMA/M1_IMA", "IMA/M2_IMA", "RES/M1_RES", "RES/M2_RES", "SAR/M1_SAR", "SAR/M2_SAR",
@@ -100,44 +79,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         for (int i = 0; i < values.length; ++i) {
             ues.add(values[i]);
         }
+
         checkboxAdapter = new CheckboxAdapter(this,ues);
 
-        checkboxAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                Toast.makeText(getBaseContext(), String.valueOf("data changed"), Toast.LENGTH_LONG);
-            }
-        });
-
-
+        // Save settings button
         FloatingActionButton buttonSaveSettings  = findViewById(R.id.buttonSaveSettings);
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ListView list_ue = findViewById(R.id.list_ue);
-                list_ue.setAdapter(checkboxAdapter);
-                FloatingActionButton fab = findViewById(R.id.fab);
-                FloatingActionButton buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
-                TextView textView = findViewById(R.id.textView1);
-                CheckBox checkBox = findViewById(R.id.checkBox1);
-                WeekView weekView = findViewById(R.id.weekView);
-
-                if(list_ue.getVisibility() == View.GONE){
-                    list_ue.setVisibility(View.VISIBLE);
-                    textView.setVisibility(View.VISIBLE);
-                    checkBox.setVisibility(View.VISIBLE);
-                    buttonSaveSettings.show();
-                    weekView.setVisibility(View.GONE);
-                    fab.hide();
-                }
-                else{
-                    list_ue.setVisibility(View.GONE);
-                    textView.setVisibility(View.GONE);
-                    checkBox.setVisibility(View.GONE);
-                    buttonSaveSettings.hide();
-                    weekView.setVisibility(View.VISIBLE);
-                    fab.show();
-                }
+               actionSaveSettings();
              }
         });
 
@@ -146,43 +96,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                events.clear();
-                ProgressBar progressBar = findViewById(R.id.progress);
-                if(progressBar.getVisibility() == view.GONE){
-                    progressBar.setVisibility(View.VISIBLE);
-                    Blurry.with(BaseActivity.this).radius(1)
-                            .sampling(2)
-                            .async()
-                            .color(android.R.color.darker_gray)
-                            .animate(500)
-                            .onto((ViewGroup) findViewById(R.id.content));
-
-                    ArrayList<String> urlsToDownload = new ArrayList<String>();
-                    ArrayList<Boolean> urlsCheck = new ArrayList<>(checkboxAdapter.getBools());
-
-                    //wtf les index sur les lists
-
-                    int i = 0;
-                    for (Boolean b : urlsCheck) {
-                        if(b.equals(true)){
-                            urlsToDownload.add(ues.get(i));
-                        }
-                        i++;
-                    }
-
-
-                    for (String strUrl: urlsToDownload) {
-                        String completeUrl = baseUE + strUrl;
-                        Log.e("XXX ", completeUrl);
-                        new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this, completeUrl).execute("");
-                    }
-
-                    updateDisplay();
-
-                }
-                else{
-
-                }
+                downloadCalendars();
             }
         });
 
@@ -193,9 +107,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-           NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-           navigationView.setNavigationItemSelectedListener(this);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -440,7 +355,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             this.events.add(wve);
         }
 
-         updateDisplay();
+        tasks --;
+        updateDisplay();
+
     }
 
     public void updateDisplay(){
@@ -466,10 +383,90 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         };
 
         mWeekView.setWeekViewLoader(wk);
-        mWeekView.notifyDatasetChanged();
+
+        if(tasks==0){
+            mWeekView.notifyDatasetChanged();
+            ProgressBar progressBar = findViewById(R.id.progress);
+            progressBar.setVisibility(View.GONE);
+            Blurry.delete((ViewGroup) findViewById(R.id.content));
+        }
+    }
+
+    public void downloadCalendars(){
+        events.clear();
         ProgressBar progressBar = findViewById(R.id.progress);
-        progressBar.setVisibility(View.GONE);
-        Blurry.delete((ViewGroup) findViewById(R.id.content));
+        if(checkboxAdapter.hasCheck()) {
+            if (progressBar.getVisibility() == View.GONE) {
+                progressBar.setVisibility(View.VISIBLE);
+                Blurry.with(BaseActivity.this).radius(1)
+                        .sampling(2)
+                        .async()
+                        .color(android.R.color.darker_gray)
+                        .animate(500)
+                        .onto((ViewGroup) findViewById(R.id.content));
+
+                ArrayList<String> urlsToDownload = new ArrayList<String>();
+                ArrayList<Boolean> urlsCheck = new ArrayList<>(checkboxAdapter.getBools());
+
+                //wtf les index sur les lists
+
+                int i = 0;
+                for (Boolean b : urlsCheck) {
+                    if (b.equals(true)) {
+                        urlsToDownload.add(ues.get(i));
+                    }
+                    i++;
+                }
+
+                tasks = urlsToDownload.size();
+                downloadUrls(urlsToDownload);
+                updateDisplay();
+
+
+            } else {
+
+            }
+        }
+        else{
+            events.clear();
+            updateDisplay();
+        }
+    }
+
+    public void downloadUrls(ArrayList<String> urlsToDownload){
+        for (String strUrl: urlsToDownload) {
+            String completeUrl = baseUE + strUrl;
+            // Log.e("XXX ", completeUrl);
+            new AsyncTaskGetEventsEntries(BaseActivity.this,BaseActivity.this, completeUrl).execute("");
+        }
+    }
+
+    public void actionSaveSettings(){
+        ListView list_ue = findViewById(R.id.list_ue);
+        list_ue.setAdapter(checkboxAdapter);
+        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
+        TextView textView = findViewById(R.id.textView1);
+        CheckBox checkBox = findViewById(R.id.checkBox1);
+        WeekView weekView = findViewById(R.id.weekView);
+
+
+        if(list_ue.getVisibility() == View.GONE){
+            list_ue.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.VISIBLE);
+            checkBox.setVisibility(View.VISIBLE);
+            buttonSaveSettings.show();
+            weekView.setVisibility(View.GONE);
+            fab.hide();
+        }
+        else{
+            list_ue.setVisibility(View.GONE);
+            textView.setVisibility(View.GONE);
+            checkBox.setVisibility(View.GONE);
+            buttonSaveSettings.hide();
+            weekView.setVisibility(View.VISIBLE);
+            fab.show();
+        }
     }
 
 }

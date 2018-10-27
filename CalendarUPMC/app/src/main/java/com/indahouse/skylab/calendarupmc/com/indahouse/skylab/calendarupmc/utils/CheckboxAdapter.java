@@ -86,4 +86,13 @@ public class CheckboxAdapter extends ArrayAdapter {
     }
 
     public List<String> getCheckboxItems() { return checkboxItems; }
+
+    public boolean hasCheck(){
+        for (Boolean b: checkboxState) {
+            if(b.equals(true)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
