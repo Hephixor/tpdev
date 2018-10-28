@@ -32,16 +32,16 @@ public class CheckboxAdapter extends ArrayAdapter {
         sharedPreferences = context.getApplicationContext().getSharedPreferences(context.getResources().getString(R.string.shared_pref),Context.MODE_PRIVATE);
         this.checkboxState = stateFromPrefs(resource);
 
-        }
+    }
 
-        private ArrayList<Boolean> stateFromPrefs(List<String> resource){
+    private ArrayList<Boolean> stateFromPrefs(List<String> resource){
         ArrayList<Boolean> tmpState = new ArrayList<Boolean>(Collections.nCopies(resource.size(), false));
         HashMap<String,?> map = (HashMap)sharedPreferences.getAll();
-            for (String str : map.keySet()) {
-                if(map.get(str).equals("true")){tmpState.set(Integer.valueOf(str),true); }
-            }
-        return tmpState;
+        for (String str : map.keySet()) {
+            if(map.get(str).equals("true")){tmpState.set(Integer.valueOf(str),true); }
         }
+        return tmpState;
+    }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
         if(convertView==null) {

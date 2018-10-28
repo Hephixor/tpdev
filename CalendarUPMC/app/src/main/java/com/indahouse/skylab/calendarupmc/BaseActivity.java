@@ -54,20 +54,20 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         }
         switch (id){
             case R.id.action_today:
-                controller.actionToday();
-                return true;
+            controller.actionToday();
+            return true;
 
             case R.id.action_day_view:
-                controller.actionDayView(item);
-                return true;
+            controller.actionDayView(item);
+            return true;
 
             case R.id.action_three_day_view:
-                controller.actionThreeDayView(item);
-                return true;
+            controller.actionThreeDayView(item);
+            return true;
 
             case R.id.action_week_view:
-                controller.actionWeekView(item);
-                return true;
+            controller.actionWeekView(item);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

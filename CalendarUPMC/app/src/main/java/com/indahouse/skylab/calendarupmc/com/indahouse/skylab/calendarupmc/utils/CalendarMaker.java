@@ -144,12 +144,12 @@ public class CalendarMaker {
 
         WeekViewEvent tmpWVEvent;
         for (CalendarEntry calEntry : calentries) {
-                for (Schedule sched : calEntry.getSchedules()) {
-                    if (sched.getStartTime().get(Calendar.YEAR) == thisYear || sched.getStartTime().get(Calendar.YEAR) == thisYear + 1) {
-                        tmpWVEvent = new WeekViewEvent(generateWVEId(),calEntry.getMatiere()+" - " + calEntry.getType()+"\n\n", "\n" + calEntry.getLocation()+"\n", sched.getStartTime(), sched.getEndTime());
-                        weekViewEvents.add(tmpWVEvent);
-                    }
+            for (Schedule sched : calEntry.getSchedules()) {
+                if (sched.getStartTime().get(Calendar.YEAR) == thisYear || sched.getStartTime().get(Calendar.YEAR) == thisYear + 1) {
+                    tmpWVEvent = new WeekViewEvent(generateWVEId(),calEntry.getMatiere()+" - " + calEntry.getType()+"\n\n", "\n" + calEntry.getLocation()+"\n", sched.getStartTime(), sched.getEndTime());
+                    weekViewEvents.add(tmpWVEvent);
                 }
+            }
         }
 
         return weekViewEvents;

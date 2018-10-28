@@ -56,11 +56,11 @@ public class Controller implements AsyncResponse {
             if (progressBar.getVisibility() == View.GONE) {
                 progressBar.setVisibility(View.VISIBLE);
                 Blurry.with(baseActivity).radius(1)
-                        .sampling(2)
-                        .async()
-                        .color(android.R.color.darker_gray)
-                        .animate(500)
-                        .onto((ViewGroup) baseActivity.findViewById(R.id.content));
+                .sampling(2)
+                .async()
+                .color(android.R.color.darker_gray)
+                .animate(500)
+                .onto((ViewGroup) baseActivity.findViewById(R.id.content));
 
                 ArrayList<String> urlsToDownload = new ArrayList<String>();
                 ArrayList<Boolean> urlsCheck = new ArrayList<>(checkboxAdapter.getBools());
@@ -146,9 +146,9 @@ public class Controller implements AsyncResponse {
         final ListView list_ue = (ListView) baseActivity.findViewById(R.id.list_ue);
 
         String[] values = new String[] { "STL/M1_STL", "STL/M2_STL", "DAC/M1_DAC",
-                "DAC/M2_DAC", "ANDROIDE/M1_ANDROIDE", "ANDROIDE/M2_ANDROIDE", "BIM/M1_BIM", "BIM/M2_BIM",
-                "IMA/M1_IMA", "IMA/M2_IMA", "RES/M1_RES", "RES/M2_RES", "SAR/M1_SAR", "SAR/M2_SAR",
-                "SESI/M1_SESI", "SESI/M2_SESI", "SFPN/M1_SFPN", "SFPN/M2_SFPN", "M1", "M2"};
+        "DAC/M2_DAC", "ANDROIDE/M1_ANDROIDE", "ANDROIDE/M2_ANDROIDE", "BIM/M1_BIM", "BIM/M2_BIM",
+        "IMA/M1_IMA", "IMA/M2_IMA", "RES/M1_RES", "RES/M2_RES", "SAR/M1_SAR", "SAR/M2_SAR",
+        "SESI/M1_SESI", "SESI/M2_SESI", "SFPN/M1_SFPN", "SFPN/M2_SFPN", "M1", "M2"};
 
         for (int i = 0; i < values.length; ++i) {
             ues.add(values[i]);
@@ -306,10 +306,10 @@ public class Controller implements AsyncResponse {
 
     public Dialog createDialog(String title, String text){
         return new AlertDialog.Builder(baseActivity)
-                .setTitle(title)
-                .setMessage(text)
-                .setPositiveButton(android.R.string.ok, null)
-                .create();
+        .setTitle(title)
+        .setMessage(text)
+        .setPositiveButton(android.R.string.ok, null)
+        .create();
     }
 
     public void setupDateTimeInterpreter(final boolean shortDate) {
@@ -368,20 +368,20 @@ public class Controller implements AsyncResponse {
             switch(event.getName().toUpperCase().substring(0,3)){
                 case "TAS":
                     // Log.e("XXX"," Je suis TAS");
-                    event.setColor(baseActivity.getResources().getColor(R.color.event_color_01));
-                    break;
+                event.setColor(baseActivity.getResources().getColor(R.color.event_color_01));
+                break;
                 case "DAR":
-                    event.setColor(baseActivity.getResources().getColor(R.color.event_color_02));
-                    break;
+                event.setColor(baseActivity.getResources().getColor(R.color.event_color_02));
+                break;
                 case "SVP":
-                    event.setColor(baseActivity.getResources().getColor(R.color.event_color_03));
-                    break;
+                event.setColor(baseActivity.getResources().getColor(R.color.event_color_03));
+                break;
                 case "PPC":
-                    event.setColor(baseActivity.getResources().getColor(R.color.event_color_04));
-                    break;
+                event.setColor(baseActivity.getResources().getColor(R.color.event_color_04));
+                break;
                 default:
                     // Log.e("XXX"," Je suis " +  event.getName().toUpperCase().substring(0,3));
-                    break;
+                break;
             }
         }
 
