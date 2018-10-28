@@ -35,8 +35,7 @@ public class CalendarMaker {
     }
 
     public void caldown() {
-        ICSDownloader icsdown = new ICSDownloader();
-        icsdown.downloadICS(urls);
+        Utils.downloadICS(urls);
     }
 
     public List<VEvent> downloadAndParseVEventsFromInternet() {

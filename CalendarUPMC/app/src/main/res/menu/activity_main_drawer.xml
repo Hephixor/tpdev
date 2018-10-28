@@ -3,28 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-
-    <item android:title="Informations">
-    </item>
-
+    <item android:title="Informations"/>
     <item
         android:id="@+id/infoTextView"
         android:title="" />
 
-    <item android:title="Filter">
-    </item>
-
+    <item android:title="Filter"/>
     <item
         android:id="@+id/filterTextView"
         android:title="" />
 
-    <item android:title="Refresh">
-    </item>
-
+    <item android:title="Refresh"/>
     <item
         android:id="@+id/refreshTextView"
         android:title="" />
-
-
 
 </menu>
