@@ -16,7 +16,7 @@ public class MainActivity extends BaseActivity{
        //Finalement cette classe servirait à charger le cache de l'emploi du temps ?
 
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
-        
+
         return events;
     }
 

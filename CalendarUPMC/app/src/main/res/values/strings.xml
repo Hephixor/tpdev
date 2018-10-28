@@ -17,4 +17,7 @@
     <string name="title_activity_asynchronous">Evènements Asynchrones</string>
     <string name="async_error">Impossible de télécharger le calendrier</string>
     <string name="shared_pref">master_pref</string>
+    <string name="informations">Bienvenue dans le calendrier des masters informatique de Sorbonne Université.</string>
+    <string name="filter"> Vous pouvez filtrer les masters en cliquant sur Settings et en les cochant pour affichage.</string>
+    <string name="refresh">Pour actualiser le calendrier, pressez le bouton flottant en bas à droite.</string>
 </resources>

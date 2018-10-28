@@ -5,11 +5,10 @@ Developping Yet Another Calendar App
 ## TODO
 
 ## BackEnd :
-Trouver un moyen de parcourir toutes les URLs de calendrier disponibles sur caldav :
-* Faire un crawler ?
 
-Stocker les préférences en shared pref
+Sélection des UEs ?
 
 ## FrontEnd :
 
 Préférences des couleurs selon les UEs
+Mettre un logo à la place de settings

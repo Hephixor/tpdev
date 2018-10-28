@@ -77,7 +77,7 @@ public class CheckboxAdapter extends ArrayAdapter {
     public void printSharedPref(){
         HashMap<String, String> hm = new HashMap<>();
         hm = (HashMap<String, String>) sharedPreferences.getAll();
-        Log.e("SharedPrefMap", hm.toString());
+        //Log.e("SharedPrefMap", hm.toString());
 
     }
 

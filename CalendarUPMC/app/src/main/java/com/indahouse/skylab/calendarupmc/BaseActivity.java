@@ -1,9 +1,13 @@
 package com.indahouse.skylab.calendarupmc;
 
+import android.app.ActionBar;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -14,6 +18,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,8 +42,10 @@ import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import jp.wasabeef.blurry.Blurry;
 
@@ -54,11 +61,20 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     private CheckboxAdapter checkboxAdapter;
     private int tasks;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+       initCalendar();
+       initSettings();
+       initButtons();
+       initLayout();
 
+    }
+
+    private void initCalendar(){
         //Calendar initialization
         mWeekView = (WeekView) findViewById(R.id.weekView);
         mWeekView.setOnEventClickListener(this);
@@ -67,7 +83,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         mWeekView.setEmptyViewLongPressListener(this);
         mWeekView.goToHour(8);
         setupDateTimeInterpreter(false);
+    }
 
+    private void initSettings(){
         //Settings list
         final ListView list_ue = (ListView) findViewById(R.id.list_ue);
 
@@ -81,14 +99,16 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         }
 
         checkboxAdapter = new CheckboxAdapter(this,ues);
+    }
 
+    public void initButtons(){
         // Save settings button
         FloatingActionButton buttonSaveSettings  = findViewById(R.id.buttonSaveSettings);
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               actionSaveSettings();
-             }
+                actionSaveSettings();
+            }
         });
 
         // Refresh action button
@@ -99,7 +119,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
                 downloadCalendars();
             }
         });
+    }
 
+    public void initLayout(){
         //General layout initialization
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -109,12 +131,131 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        initDrawer(navigationView);
+    }
+
+    public void initDrawer(NavigationView navigationView){
+        //Informations
+        MenuItem drawer_item_one = navigationView.getMenu().findItem(R.id.infoTextView);
+        TextView drawer_text_one = new TextView(this);
+
+        drawer_text_one.setText(getResources().getString(R.string.informations));
+        drawer_text_one.setTextColor(Color.BLACK);
+        drawer_item_one.setActionView(drawer_text_one);
+
+        //Filter
+        MenuItem drawer_item_two = navigationView.getMenu().findItem(R.id.filterTextView);
+        TextView drawer_text_two = new TextView(this);
+
+        drawer_text_two.setText(getResources().getString(R.string.filter));
+        drawer_text_two.setTextColor(Color.BLACK);
+        drawer_item_two.setActionView(drawer_text_two);
+
+        //Refresh
+        MenuItem drawer_item_three = navigationView.getMenu().findItem(R.id.refreshTextView);
+        TextView drawer_text_three = new TextView(this);
+
+        drawer_text_three.setText(getResources().getString(R.string.refresh));
+        drawer_text_three.setTextColor(Color.BLACK);
+        drawer_item_three.setActionView(drawer_text_three);
+    }
+
+    public void actionSettings(){
+        ListView list_ue = findViewById(R.id.list_ue);
+        list_ue.setAdapter(checkboxAdapter);
+        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
+        TextView textView = findViewById(R.id.textView1);
+        CheckBox checkBox = findViewById(R.id.checkBox1);
+        WeekView weekView = findViewById(R.id.weekView);
+        list_ue.setBackgroundColor(Color.WHITE);
+        if(list_ue.getVisibility() == View.GONE){
+            list_ue.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.VISIBLE);
+            checkBox.setVisibility(View.VISIBLE);
+            buttonSaveSettings.show();
+
+            weekView.setVisibility(View.GONE);
+            fab.hide();
+        }
+        else{
+            list_ue.setVisibility(View.GONE);
+            textView.setVisibility(View.GONE);
+            checkBox.setVisibility(View.GONE);
+            buttonSaveSettings.hide();
+            weekView.setVisibility(View.VISIBLE);
+            fab.show();
+        }
+    }
+
+    public void actionToday(){
+        mWeekView.goToToday();
+        mWeekView.goToHour(8);
+    }
+
+    public void actionDayView(MenuItem item){
+        Double hour = mWeekView.getFirstVisibleHour();
+        if (mWeekViewType != TYPE_DAY_VIEW) {
+            Calendar caltmp = Calendar.getInstance();
+            caltmp = mWeekView.getFirstVisibleDay();
+            item.setChecked(!item.isChecked());
+            mWeekViewType = TYPE_DAY_VIEW;
+            mWeekView.setNumberOfVisibleDays(1);
+
+            // Lets change some dimensions to best fit the view.
+            mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
+            mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+            mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+            mWeekView.goToDate(caltmp);
+        }
+        mWeekView.goToHour(hour);
+    }
+
+    public void actionThreeDayView(MenuItem item){
+        Double hour = mWeekView.getFirstVisibleHour();
+        if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
+            Calendar caltmp = Calendar.getInstance();
+            caltmp = mWeekView.getFirstVisibleDay();
+            item.setChecked(!item.isChecked());
+            mWeekViewType = TYPE_THREE_DAY_VIEW;
+            mWeekView.setNumberOfVisibleDays(3);
+
+            // Lets change some dimensions to best fit the view.
+            mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
+            mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+            mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+            mWeekView.goToDate(caltmp);
+        }
+        mWeekView.goToHour(hour);
+    }
+
+    public void actionWeekView(MenuItem item){
+        Double hour = mWeekView.getFirstVisibleHour();
+        if (mWeekViewType != TYPE_WEEK_VIEW) {
+            Calendar caltmp = Calendar.getInstance();
+            caltmp = mWeekView.getFirstVisibleDay();
+            item.setChecked(!item.isChecked());
+            mWeekViewType = TYPE_WEEK_VIEW;
+            mWeekView.setNumberOfVisibleDays(7);
+
+            // Lets change some dimensions to best fit the view.
+            mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
+            mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+            mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+            mWeekView.goToDate(caltmp);
+        }
+        mWeekView.goToHour(hour);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+
+        MenuItem settings = menu.findItem(R.id.action_settings);
+        settings.setIcon(android.R.drawable.ic_menu_preferences);
+
         return true;
     }
 
@@ -124,83 +265,24 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         setupDateTimeInterpreter(id == R.id.action_week_view);
 
         if (id == R.id.action_settings) {
-            ListView list_ue = findViewById(R.id.list_ue);
-            list_ue.setAdapter(checkboxAdapter);
-            FloatingActionButton fab = findViewById(R.id.fab);
-            FloatingActionButton buttonSaveSettings = findViewById(R.id.buttonSaveSettings);
-            TextView textView = findViewById(R.id.textView1);
-            CheckBox checkBox = findViewById(R.id.checkBox1);
-            WeekView weekView = findViewById(R.id.weekView);
-
-            list_ue.setBackgroundColor(Color.WHITE);
-
-            if(list_ue.getVisibility() == View.GONE){
-                list_ue.setVisibility(View.VISIBLE);
-                textView.setVisibility(View.VISIBLE);
-                checkBox.setVisibility(View.VISIBLE);
-                buttonSaveSettings.show();
-
-                weekView.setVisibility(View.GONE);
-                fab.hide();
-            }
-            else{
-                list_ue.setVisibility(View.GONE);
-                textView.setVisibility(View.GONE);
-                checkBox.setVisibility(View.GONE);
-                buttonSaveSettings.hide();
-                weekView.setVisibility(View.VISIBLE);
-                fab.show();
-            }
+            actionSettings();
             return true;
         }
         switch (id){
             case R.id.action_today:
-                mWeekView.goToToday();
-                mWeekView.goToHour(8);
+                actionToday();
                 return true;
 
             case R.id.action_day_view:
-
-                if (mWeekViewType != TYPE_DAY_VIEW) {
-                    item.setChecked(!item.isChecked());
-                    mWeekViewType = TYPE_DAY_VIEW;
-                    mWeekView.setNumberOfVisibleDays(1);
-
-                    // Lets change some dimensions to best fit the view.
-                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                    mWeekView.goToHour(8);
-                }
-
+                actionDayView(item);
                 return true;
+
             case R.id.action_three_day_view:
-                if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
-                    item.setChecked(!item.isChecked());
-                    mWeekViewType = TYPE_THREE_DAY_VIEW;
-                    mWeekView.setNumberOfVisibleDays(3);
-
-                    // Lets change some dimensions to best fit the view.
-                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                    mWeekView.goToHour(8);
-                }
-                mWeekView.goToHour(8);
+                actionThreeDayView(item);
                 return true;
-            case R.id.action_week_view:
-                if (mWeekViewType != TYPE_WEEK_VIEW) {
-                    item.setChecked(!item.isChecked());
-                    mWeekViewType = TYPE_WEEK_VIEW;
-                    mWeekView.setNumberOfVisibleDays(7);
 
-                    // Lets change some dimensions to best fit the view.
-                    mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
-                    mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
-                    mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
-                    mWeekView.goToHour(8);
-                }
-                mWeekView.goToHour(8);
+            case R.id.action_week_view:
+                actionWeekView(item);
                 return true;
         }
 
@@ -234,47 +316,25 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ListView list_ue = (ListView) findViewById(R.id.list_ue);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+
+        else if(list_ue.getVisibility() == View.VISIBLE){
+            toggleView();
+        }
+
+        else {
             super.onBackPressed();
         }
+
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        Fragment fragment = null;
-        Class fragmentClass = null;
-
-        if (id == R.id.nav_camera) {
-            Toast.makeText(this,"Camera",Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_gallery) {
-            Toast.makeText(this,"Gallery",Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_slideshow) {
-            Toast.makeText(this,"Slideshow",Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_manage) {
-            Toast.makeText(this,"Manage",Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_share) {
-            Toast.makeText(this,"Share",Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_send) {
-            Toast.makeText(this,"Send",Toast.LENGTH_SHORT).show();
-        }
-
-        try {
-            if(fragmentClass!=null) {
-                fragment = (Fragment) fragmentClass.newInstance();
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -389,6 +449,15 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
             ProgressBar progressBar = findViewById(R.id.progress);
             progressBar.setVisibility(View.GONE);
             Blurry.delete((ViewGroup) findViewById(R.id.content));
+
+          /*  Set<WeekViewEvent> wveSet = new HashSet<WeekViewEvent>();
+            wveSet.addAll(events);
+
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("cachedCalendar",Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("calendar",wveSet);
+            editor.commit(); */
+
         }
     }
 
@@ -442,6 +511,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     }
 
     public void actionSaveSettings(){
+       toggleView();
+    }
+
+    public void toggleView(){
         ListView list_ue = findViewById(R.id.list_ue);
         list_ue.setAdapter(checkboxAdapter);
         FloatingActionButton fab = findViewById(R.id.fab);
