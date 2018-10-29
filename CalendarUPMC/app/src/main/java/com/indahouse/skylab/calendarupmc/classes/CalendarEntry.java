@@ -1,6 +1,4 @@
-package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
-
-import android.util.Log;
+package com.indahouse.skylab.calendarupmc.classes;
 
 import java.util.ArrayList;
 

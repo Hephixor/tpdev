@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
     implementation 'com.github.alamkanak:android-week-view:1.2.6'
     implementation 'jp.wasabeef:blurry:2.0.3'
+    implementation 'com.google.code.gson:gson:2.7'
 
     implementation files('jars/biweekly-0.6.2.jar')
     implementation files('jars/vinnie-2.0.2.jar')

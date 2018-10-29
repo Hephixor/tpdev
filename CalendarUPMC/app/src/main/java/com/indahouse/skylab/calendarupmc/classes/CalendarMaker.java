@@ -1,9 +1,6 @@
-package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
-
-import android.util.Log;
+package com.indahouse.skylab.calendarupmc.classes;
 
 import com.alamkanak.weekview.WeekViewEvent;
-import com.indahouse.skylab.calendarupmc.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import biweekly.Biweekly;
 import biweekly.ICalendar;
@@ -26,16 +22,10 @@ import biweekly.util.org.apache.commons.codec.binary.Base64;
 public class CalendarMaker {
     private static String urls;
     private static List<VEvent> vEvents;
-
-    private static Random rand = new Random();
     private static long WVEidCounter = 0;
 
     public CalendarMaker(String url) {
         urls = url;
-    }
-
-    public void caldown() {
-        Utils.downloadICS(urls);
     }
 
     public List<VEvent> downloadAndParseVEventsFromInternet() {
@@ -137,9 +127,7 @@ public class CalendarMaker {
     }
 
     public static ArrayList<WeekViewEvent> toWeekViewEvents(List<CalendarEntry> calentries) {
-        // IL,4I502,Consultation Copies,Salle SAR (14.15.508),02,13:00:00,Jul,2018,Jul,2018,02,14:00:00,true
         ArrayList<WeekViewEvent> weekViewEvents = new ArrayList<WeekViewEvent>();
-
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
 
         WeekViewEvent tmpWVEvent;
@@ -151,7 +139,6 @@ public class CalendarMaker {
                 }
             }
         }
-
         return weekViewEvents;
     }
 

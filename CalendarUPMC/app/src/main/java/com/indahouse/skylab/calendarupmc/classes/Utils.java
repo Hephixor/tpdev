@@ -1,4 +1,4 @@
-package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
+package com.indahouse.skylab.calendarupmc.classes;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,9 +14,7 @@ import biweekly.util.org.apache.commons.codec.binary.Base64;
 
 public class Utils {
 
-    public Utils(){
-
-    }
+    public Utils(){}
 
     public static File downloadICS(String urls) {
         URL url;

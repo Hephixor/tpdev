@@ -1,4 +1,4 @@
-package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
+package com.indahouse.skylab.calendarupmc.classes;
 
 import java.util.Calendar;
 

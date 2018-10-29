@@ -1,6 +1,8 @@
-package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
+package com.indahouse.skylab.calendarupmc.classes;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -21,9 +23,12 @@ import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
 import com.alamkanak.weekview.WeekViewLoader;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.indahouse.skylab.calendarupmc.BaseActivity;
 import com.indahouse.skylab.calendarupmc.R;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +37,7 @@ import java.util.Locale;
 
 import jp.wasabeef.blurry.Blurry;
 
-public class Controller implements AsyncResponse {
+public class Controller {
     BaseActivity baseActivity;
     public static final int TYPE_DAY_VIEW = 1;
     public static final int TYPE_THREE_DAY_VIEW = 2;
@@ -362,7 +367,6 @@ public class Controller implements AsyncResponse {
 
     }
 
-    @Override
     public void processFinish(ArrayList<WeekViewEvent> eventz){
         for (WeekViewEvent event: eventz) {
             switch(event.getName().toUpperCase().substring(0,3)){
@@ -389,24 +393,42 @@ public class Controller implements AsyncResponse {
             events.add(wve);
         }
 
-
         updateDisplay();
 
         tasks --;
         if(tasks==0){
+            //Display calendars
             mWeekView.notifyDatasetChanged();
             ProgressBar progressBar = baseActivity.findViewById(R.id.progress);
             progressBar.setVisibility(View.GONE);
             Blurry.delete((ViewGroup) baseActivity.findViewById(R.id.content));
 
-          /*  Set<WeekViewEvent> wveSet = new HashSet<WeekViewEvent>();
-            wveSet.addAll(events);
-
-            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("cachedCalendar",Context.MODE_PRIVATE);
+            //Saving calendars in cache
+            SharedPreferences sharedPreferences = baseActivity.getSharedPreferences("cachedCalendar",Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("calendar",wveSet);
-            editor.commit(); */
-        }
+
+            editor.putString("cache", toJson((events)));
+            editor.commit();
+         }
+    }
+
+    public void getCachedCalendars(){
+        ArrayList<WeekViewEvent> cachedCalendars = new ArrayList<WeekViewEvent>();
+        //Get cached calendars
+        SharedPreferences sharedPreferences = baseActivity.getSharedPreferences("cachedCalendar",Context.MODE_PRIVATE);
+        String strCalendars = sharedPreferences.getString("cache","Defaultvalue");
+        cachedCalendars= (ArrayList<WeekViewEvent>) fromJson(strCalendars,new TypeToken<ArrayList<WeekViewEvent>>(){}.getType());
+        events.clear();
+        for (WeekViewEvent wve: cachedCalendars) {events.add(wve);}
+		updateDisplay();
+    }
+
+    public static String toJson(Object jsonObject) {
+        return new Gson().toJson(jsonObject);
+    }
+
+    public static Object fromJson(String jsonString, Type type) {
+        return new Gson().fromJson(jsonString, type);
     }
 
 }

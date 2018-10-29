@@ -1,9 +1,8 @@
-package com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils;
+package com.indahouse.skylab.calendarupmc.classes;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CheckboxAdapter extends ArrayAdapter {
     Context context;
@@ -68,17 +66,9 @@ public class CheckboxAdapter extends ArrayAdapter {
         return convertView;
     }
 
-    private void setChecked( int position, boolean state)
-    {
+    private void setChecked( int position, boolean state) {
         checkboxState.set(position, state);
         notifyDataSetChanged();
-    }
-
-    public void printSharedPref(){
-        HashMap<String, String> hm = new HashMap<>();
-        hm = (HashMap<String, String>) sharedPreferences.getAll();
-        //Log.e("SharedPrefMap", hm.toString());
-
     }
 
     public List<Boolean> getBools(){

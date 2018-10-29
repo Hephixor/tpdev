@@ -14,11 +14,13 @@ import android.widget.ListView;
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
-import com.indahouse.skylab.calendarupmc.com.indahouse.skylab.calendarupmc.utils.Controller;
+import com.indahouse.skylab.calendarupmc.classes.Controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
-public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener{
+public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener{
 
     Controller controller;
 
@@ -31,6 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         controller.initSettings();
         controller.initButtons();
         controller.initLayout();
+        controller.getCachedCalendars();
     }
 
     @Override
@@ -126,6 +129,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     @Override
     public void onEmptyViewLongPress(Calendar time) {
         //  Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
+        List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+        return events;
     }
 
 }
