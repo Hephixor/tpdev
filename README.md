@@ -11,4 +11,3 @@ Sélection des UEs ?
 ## FrontEnd :
 
 Préférences des couleurs selon les UEs
-Mettre un logo à la place de settings
