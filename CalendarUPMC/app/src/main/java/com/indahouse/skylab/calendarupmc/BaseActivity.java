@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
@@ -28,6 +29,8 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+
+        //Set up the controller
         controller = new Controller(this);
         controller.initCalendar();
         controller.initSettings();
@@ -51,10 +54,12 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         controller.setupDateTimeInterpreter(id == R.id.action_week_view);
 
+        //Call action settings
         if (id == R.id.action_settings) {
             controller.actionSettings();
             return true;
         }
+        //Control the calendar appearance
         switch (id){
             case R.id.action_today:
             controller.actionToday();
@@ -110,6 +115,7 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         String location = event.getLocation();
         String name = event.getName();
 
+        //Fix time
         if(sMinute.equals("0")){
             sMinute="00";
         }
@@ -118,19 +124,21 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
             eMinute="00";
         }
 
+        //Display event infos in a modal
         controller.createDialog(name, sHour + ":" + sMinute + " - " + eHour + ":" + eMinute + " \n " + location).show();
     }
 
     @Override
     public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-        // Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "You found the secret function !" , Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onEmptyViewLongPress(Calendar time) {
-        //  Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "You found the secret function !" , Toast.LENGTH_SHORT).show();
     }
 
+    //Useless listener
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();

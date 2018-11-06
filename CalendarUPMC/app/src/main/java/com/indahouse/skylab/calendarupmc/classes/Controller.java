@@ -32,8 +32,12 @@ import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import jp.wasabeef.blurry.Blurry;
 
@@ -46,7 +50,7 @@ public class Controller {
     public WeekView mWeekView;
     public final String baseUE = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/");
     public List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
-    public ArrayList<String> ues = new ArrayList<String>();
+    public LinkedHashMap<String,String> keyToUrls;
     public CheckboxAdapter checkboxAdapter;
     public int tasks;
 
@@ -54,6 +58,7 @@ public class Controller {
         this.baseActivity = baseActivity;
     }
 
+    //download wrapper with design
     public void downloadCalendars(){
         events.clear();
         ProgressBar progressBar = baseActivity.findViewById(R.id.progress);
@@ -70,12 +75,11 @@ public class Controller {
                 ArrayList<String> urlsToDownload = new ArrayList<String>();
                 ArrayList<Boolean> urlsCheck = new ArrayList<>(checkboxAdapter.getBools());
 
-                //wtf les index sur les lists
-
                 int i = 0;
                 for (Boolean b : urlsCheck) {
                     if (b.equals(true)) {
-                        urlsToDownload.add(ues.get(i));
+                        ArrayList<String> urls = new ArrayList<String>(keyToUrls.values());
+                        urlsToDownload.add(urls.get(i));
                     }
                     i++;
                 }
@@ -95,10 +99,10 @@ public class Controller {
         }
     }
 
+    //Get events list from url
     public void downloadUrls(ArrayList<String> urlsToDownload){
         for (String strUrl: urlsToDownload) {
             String completeUrl = baseUE + strUrl;
-            // Log.e("XXX ", completeUrl);
             new AsyncTaskGetEventsEntries(this,baseActivity, completeUrl).execute("");
         }
     }
@@ -107,6 +111,7 @@ public class Controller {
         toggleView();
     }
 
+    //Switch between calendar and settings
     public void toggleView(){
         ListView list_ue = baseActivity.findViewById(R.id.list_ue);
         list_ue.setAdapter(checkboxAdapter);
@@ -135,8 +140,8 @@ public class Controller {
         }
     }
 
+    //Calendar initialization
     public void initCalendar(){
-        //Calendar initialization
         mWeekView = (WeekView) baseActivity.findViewById(R.id.weekView);
         mWeekView.setOnEventClickListener(baseActivity);
         mWeekView.setMonthChangeListener(baseActivity);
@@ -146,22 +151,42 @@ public class Controller {
         setupDateTimeInterpreter(false);
     }
 
+    //Settings list
     public void initSettings(){
-        //Settings list
         final ListView list_ue = (ListView) baseActivity.findViewById(R.id.list_ue);
+        keyToUrls = new LinkedHashMap<>();
 
-        String[] values = new String[] { "STL/M1_STL", "STL/M2_STL", "DAC/M1_DAC",
-        "DAC/M2_DAC", "ANDROIDE/M1_ANDROIDE", "ANDROIDE/M2_ANDROIDE", "BIM/M1_BIM", "BIM/M2_BIM",
-        "IMA/M1_IMA", "IMA/M2_IMA", "RES/M1_RES", "RES/M2_RES", "SAR/M1_SAR", "SAR/M2_SAR",
-        "SESI/M1_SESI", "SESI/M2_SESI", "SFPN/M1_SFPN", "SFPN/M2_SFPN", "M1", "M2"};
+        keyToUrls.put("M1 STL", "STL/M1_STL");
+        keyToUrls.put("M2 STL", "STL/M2_STL");
+        keyToUrls.put("M1 DAC", "DAC/M1_DAC");
+        keyToUrls.put("M2 DAC", "DAC/M2_DAC");
+        keyToUrls.put("M1 ANDROIDE", "ANDROIDE/M1_ANDROIDE");
+        keyToUrls.put("M2 ANDROIDE", "ANDROIDE/M2_ANDROIDE");
+        keyToUrls.put("M1 BIM", "BIM/M1_BIM");
+        keyToUrls.put("M2 BIM", "BIM/M2_BIM");
+        keyToUrls.put("M1 IMA", "IMA/M1_IMA");
+        keyToUrls.put("M2 IMA", "IMA/M2_IMA");
+        keyToUrls.put("M1 RES", "RES/M1_RES");
+        keyToUrls.put("M2 RES", "RES/M2_RES");
+        keyToUrls.put("M1 SAR", "RES/M1_SAR");
+        keyToUrls.put("M2 SAR", "RES/M2_SAR");
+        keyToUrls.put("M1 SESI", "SESI/M1_SESI");
+        keyToUrls.put("M2 SESI", "SESI/M2_SESI");
+        keyToUrls.put("M1 SFPN", "SFPN/M1_SFPN");
+        keyToUrls.put("M2 SFPN", "SFPN/M2_SFPN");
+        keyToUrls.put("M1", "");
+        keyToUrls.put("M2", "");
 
-        for (int i = 0; i < values.length; ++i) {
-            ues.add(values[i]);
+
+        List<String> resource = new ArrayList<String>();
+        for (String str: keyToUrls.keySet()) {
+            resource.add(str);
         }
 
-        checkboxAdapter = new CheckboxAdapter(baseActivity,ues);
+        checkboxAdapter = new CheckboxAdapter(baseActivity,keyToUrls, resource);
     }
 
+    //Set buttons listeners
     public void initButtons(){
         // Save settings button
         FloatingActionButton buttonSaveSettings  = baseActivity.findViewById(R.id.buttonSaveSettings);
@@ -222,6 +247,7 @@ public class Controller {
         drawer_item_three.setActionView(drawer_text_three);
     }
 
+    //Display master selection list
     public void actionSettings(){
         ListView list_ue = baseActivity.findViewById(R.id.list_ue);
         list_ue.setAdapter(checkboxAdapter);
@@ -255,6 +281,7 @@ public class Controller {
         mWeekView.goToHour(8);
     }
 
+    //Switch to 1-day appearance
     public void actionDayView(MenuItem item){
         Double hour = mWeekView.getFirstVisibleHour();
         if (mWeekViewType != TYPE_DAY_VIEW) {
@@ -273,6 +300,7 @@ public class Controller {
         mWeekView.goToHour(hour);
     }
 
+    //Switch to 3-days appearance
     public void actionThreeDayView(MenuItem item){
         Double hour = mWeekView.getFirstVisibleHour();
         if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
@@ -291,6 +319,7 @@ public class Controller {
         mWeekView.goToHour(hour);
     }
 
+    //Switch to week appearance
     public void actionWeekView(MenuItem item){
         Double hour = mWeekView.getFirstVisibleHour();
         if (mWeekViewType != TYPE_WEEK_VIEW) {
@@ -309,6 +338,7 @@ public class Controller {
         mWeekView.goToHour(hour);
     }
 
+    //Modal provider
     public Dialog createDialog(String title, String text){
         return new AlertDialog.Builder(baseActivity)
         .setTitle(title)
@@ -317,6 +347,7 @@ public class Controller {
         .create();
     }
 
+    //Stuff to format date & time
     public void setupDateTimeInterpreter(final boolean shortDate) {
         mWeekView.setDateTimeInterpreter(new DateTimeInterpreter() {
             @Override
@@ -341,6 +372,8 @@ public class Controller {
         });
     }
 
+
+    //Notify Calendar to display newly created events
     public void updateDisplay(){
         WeekViewLoader wk = new WeekViewLoader() {
             int i=0;
@@ -366,6 +399,7 @@ public class Controller {
         mWeekView.setWeekViewLoader(wk);
 
     }
+
 
     public void processFinish(ArrayList<WeekViewEvent> eventz){
         for (WeekViewEvent event: eventz) {
@@ -395,6 +429,7 @@ public class Controller {
 
         updateDisplay();
 
+        //Count until all calendars are downloaded
         tasks --;
         if(tasks==0){
             //Display calendars
@@ -417,10 +452,15 @@ public class Controller {
         //Get cached calendars
         SharedPreferences sharedPreferences = baseActivity.getSharedPreferences("cachedCalendar",Context.MODE_PRIVATE);
         String strCalendars = sharedPreferences.getString("cache","Defaultvalue");
-        cachedCalendars= (ArrayList<WeekViewEvent>) fromJson(strCalendars,new TypeToken<ArrayList<WeekViewEvent>>(){}.getType());
-        events.clear();
-        for (WeekViewEvent wve: cachedCalendars) {events.add(wve);}
-		updateDisplay();
+        if(!(strCalendars.equals("Defaultvalue"))){
+            cachedCalendars = (ArrayList<WeekViewEvent>) fromJson(strCalendars, new TypeToken<ArrayList<WeekViewEvent>>() {
+            }.getType());
+            events.clear();
+            for (WeekViewEvent wve : cachedCalendars) {
+                events.add(wve);
+            }
+            updateDisplay();
+        }
     }
 
     public static String toJson(Object jsonObject) {

@@ -28,8 +28,10 @@ public class CalendarMaker {
         urls = url;
     }
 
+    //Connects to url and fetch ics file
     public List<VEvent> downloadAndParseVEventsFromInternet() {
         try {
+            //General settings
             String user_pass = "student.master:guest";
             String encoded_pass = Base64.encodeBase64String(user_pass.getBytes());
 
@@ -40,8 +42,7 @@ public class CalendarMaker {
             con.setRequestProperty("Content-Type", "text/calendar");
             con.setRequestProperty("Authorization", "Basic " + encoded_pass);
 
-            System.out.println("Status: " + con.getResponseCode());
-
+            //Fecth raw text
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
             StringBuffer content = new StringBuffer();
@@ -53,6 +54,7 @@ public class CalendarMaker {
             in.close();
             con.disconnect();
 
+            //Parse raw text
             String calendar = content.toString();
             ICalendar ical = Biweekly.parse(calendar).first();
             vEvents = ical.getEvents();
@@ -71,6 +73,7 @@ public class CalendarMaker {
 
         ArrayList<CalendarEntry> CalEntries = new ArrayList<CalendarEntry>();
 
+        //Parse each event
         for (VEvent vEvent : vevents) {
             //Details
             String[] pue = vEvent.getSummary().getValue().split("-");
@@ -89,7 +92,7 @@ public class CalendarMaker {
             CalendarEntry tmpCal = new CalendarEntry(matiere,code,type,location,0);
             CalEntries.add(tmpCal);
 
-            /*calcul de la duree du vEvent*/
+            /*compute vEvent duration*/
             //Start Time
             Calendar firstStartTime = Calendar.getInstance();
             firstStartTime.setTime(vEvent.getDateStart().getValue());
@@ -100,12 +103,12 @@ public class CalendarMaker {
             firstEndTime.setTime(vEvent.getDateEnd().getValue());
             int end_hour = firstEndTime.get(Calendar.HOUR_OF_DAY);
             int end_min = firstEndTime.get(Calendar.MINUTE);
-            //duree
+            //Duration
             int duree_hour = end_hour - start_hour;
             int duree_min = end_min - start_min;
             assert (duree_hour >= 0 && duree_min >= 0);
 
-            /* iterateur sur les repetitions du vEvent (sans les exceptions) */
+            //Iterator on vEvent repetitions (without exceptions)
             DateIterator iterator = vEvent.getDateIterator(Calendar.getInstance().getTimeZone());
             while(iterator.hasNext()) {
                 Date startDate = iterator.next();
@@ -126,6 +129,7 @@ public class CalendarMaker {
         return CalEntries;
     }
 
+    //Instantiate new WeekViewEvent from calendarEntry list
     public static ArrayList<WeekViewEvent> toWeekViewEvents(List<CalendarEntry> calentries) {
         ArrayList<WeekViewEvent> weekViewEvents = new ArrayList<WeekViewEvent>();
         int thisYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -142,6 +146,7 @@ public class CalendarMaker {
         return weekViewEvents;
     }
 
+    //ensure that every single event has a different ID
     private static long generateWVEId() {
         WVEidCounter++;
         return WVEidCounter;

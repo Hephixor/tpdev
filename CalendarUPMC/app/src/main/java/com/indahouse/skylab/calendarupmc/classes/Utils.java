@@ -16,6 +16,11 @@ public class Utils {
 
     public Utils(){}
 
+    /* Used to download a calendar and store it in ICS format.
+       File can be opened with the device calendar to sync
+       May be useless since it cannot be resynched
+     */
+
     public static File downloadICS(String urls) {
         URL url;
         File file = null;

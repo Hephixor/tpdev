@@ -7,6 +7,7 @@ public class Schedule {
     private Calendar startTime;
     private Calendar endTime;
 
+    //This class is used to represent an occurence of a repeated event
     public Schedule(Calendar startTime, Calendar endTime) {
         this.startTime = startTime;
         this.endTime = endTime;

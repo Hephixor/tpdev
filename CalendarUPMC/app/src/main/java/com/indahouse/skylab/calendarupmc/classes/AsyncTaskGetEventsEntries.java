@@ -15,7 +15,7 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<String, Integer, ArrayL
     private ArrayList<WeekViewEvent> weekViewEvents;
     private String url;
 
-
+    //Constructor
     public AsyncTaskGetEventsEntries(Controller delegate, Context ctx, String urls) {
         this.delegate = delegate;
         this.context = ctx;
@@ -39,7 +39,7 @@ public class AsyncTaskGetEventsEntries extends AsyncTask<String, Integer, ArrayL
     protected void onPostExecute(ArrayList<CalendarEntry> calEntries) {
         super.onPostExecute(calEntries);
 
-        //callBack evens
+        //callBack events without using listener nor interface
         weekViewEvents.clear();
         weekViewEvents = CalendarMaker.toWeekViewEvents(calEntries);
         delegate.processFinish(weekViewEvents);
