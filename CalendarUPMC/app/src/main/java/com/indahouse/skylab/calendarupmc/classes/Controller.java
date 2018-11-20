@@ -50,54 +50,54 @@ public class Controller {
     public WeekView mWeekView;
     public final String baseUE = new String("https://cal.ufr-info-p6.jussieu.fr/caldav.php/");
     public List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
-    public LinkedHashMap<String,String> keyToUrls;
+    public LinkedHashMap<String, String> keyToUrls;
     public CheckboxAdapter checkboxAdapter;
     public int tasks;
 
-    public Controller(BaseActivity baseActivity){
+    public Controller(BaseActivity baseActivity) {
         this.baseActivity = baseActivity;
     }
 
     //download wrapper with design
-    public void downloadCalendars(){
+    public void downloadCalendars() {
         events.clear();
         ProgressBar progressBar = baseActivity.findViewById(R.id.progress);
-        if(checkboxAdapter.hasCheck()) {
-            if (progressBar.getVisibility() == View.GONE) {
+        if (checkboxAdapter.hasCheck()) {
+            if (progressBar.getVisibility() == View.GONE)
                 progressBar.setVisibility(View.VISIBLE);
-                Blurry.with(baseActivity).radius(1)
-                .sampling(2)
-                .async()
-                .color(android.R.color.darker_gray)
-                .animate(500)
-                .onto((ViewGroup) baseActivity.findViewById(R.id.content));
+            Blurry.with(baseActivity).radius(1)
+                    .sampling(2)
+                    .async()
+                    .color(android.R.color.darker_gray)
+                    .animate(500)
+                    .onto((ViewGroup) baseActivity.findViewById(R.id.content));
 
-                ArrayList<String> urlsToDownload = new ArrayList<String>();
-                ArrayList<Boolean> urlsCheck = new ArrayList<>(checkboxAdapter.getBools());
+            ArrayList<String> urlsToDownload = new ArrayList<String>();
+            ArrayList<Boolean> urlsCheck = new ArrayList<>(checkboxAdapter.getBools());
 
-                int i = 0;
-                for (Boolean b : urlsCheck) {
-                    if (b.equals(true)) {
-                        ArrayList<String> urls = new ArrayList<String>(keyToUrls.values());
-                        urlsToDownload.add(urls.get(i));
-                    }
-                    i++;
+            int i = 0;
+            for (Boolean b : urlsCheck) {
+                if (b.equals(true)) {
+                    ArrayList<String> urls = new ArrayList<String>(keyToUrls.values());
+                    urlsToDownload.add(urls.get(i));
                 }
-
-                tasks = urlsToDownload.size();
-                downloadUrls(urlsToDownload);
-                updateDisplay();
-
-
-            } else {
-
+                i++;
             }
-        }
-        else{
-            events.clear();
+
+            tasks = urlsToDownload.size();
+            downloadUrls(urlsToDownload);
             updateDisplay();
+
+
         }
+
+        else
+    {
+        events.clear();
+        updateDisplay();
     }
+
+}
 
     //Get events list from url
     public void downloadUrls(ArrayList<String> urlsToDownload){
